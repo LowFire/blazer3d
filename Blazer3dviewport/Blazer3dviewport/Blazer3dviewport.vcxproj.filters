@@ -32,5 +32,11 @@
     <ClInclude Include="..\include\bVertexArrayObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bApplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

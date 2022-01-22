@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Desktop\schoolwork\CSE499\blazer3d\glm;D:\Desktop\schoolwork\CSE499\blazer3d\glad\include;D:\Desktop\schoolwork\CSE499\blazer3d\glfw\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Desktop\schoolwork\CSE499\blazer3d\Blazer3dviewport\include;D:\Desktop\schoolwork\CSE499\blazer3d\glm;D:\Desktop\schoolwork\CSE499\blazer3d\glad\include;D:\Desktop\schoolwork\CSE499\blazer3d\glfw\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Desktop\schoolwork\CSE499\blazer3d\glfw;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -147,8 +147,10 @@
     <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\bApplication.h" />
     <ClInclude Include="..\include\bBufferObjects.h" />
     <ClInclude Include="..\include\bVertexArrayObjects.h" />
+    <ClInclude Include="..\include\constants.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

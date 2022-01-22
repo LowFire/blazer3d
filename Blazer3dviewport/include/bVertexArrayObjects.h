@@ -9,6 +9,7 @@
 #include <glad/glad.h>
 
 #include "bBufferObjects.h"
+#include "constants.h"
 
 /*
 * Class Author: Dallin Carling Lovin
@@ -49,7 +50,7 @@ public:
 			new_vao.label = std::to_string(i);
 			glCreateVertexArrays(1, &new_vao.opengl_name);
 			glObjectLabel(GL_VERTEX_ARRAY, new_vao.opengl_name,
-				-1, new_vao.label.c_str()); //TODO: need a constant that indicates what -1 means in this context.
+				NULL_TERMINATED, new_vao.label.c_str());
 			vertex_arrays.push_back(new_vao);
 		}
 	}
@@ -62,7 +63,7 @@ public:
 			new_vao.label = labels.at(i);
 			glCreateVertexArrays(1, &new_vao.opengl_name);
 			glObjectLabel(GL_VERTEX_ARRAY, new_vao.opengl_name,
-				-1, labels.at(i).c_str());
+				NULL_TERMINATED, labels.at(i).c_str());
 			vertex_arrays.push_back(new_vao);
 		}
 	}
