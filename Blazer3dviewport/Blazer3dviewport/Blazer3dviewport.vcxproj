@@ -151,6 +151,7 @@
     <ClInclude Include="..\include\bBufferObjects.h" />
     <ClInclude Include="..\include\bVertexArrayObjects.h" />
     <ClInclude Include="..\include\constants.h" />
+    <ClInclude Include="bWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

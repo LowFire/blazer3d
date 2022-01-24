@@ -1,3 +1,5 @@
 #pragma once
 
 #define NULL_TERMINATED -1
+#define DEFAULT_WINDOW_WIDTH 800
+#define DEFAULT_WINDOW_HEIGHT 640
