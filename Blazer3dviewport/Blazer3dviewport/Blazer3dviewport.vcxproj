@@ -82,8 +82,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Desktop\schoolwork\CSE499\blazer3d\Blazer3dviewport\include;D:\Desktop\schoolwork\CSE499\blazer3d\glm;D:\Desktop\schoolwork\CSE499\blazer3d\glfw\include;D:\Desktop\schoolwork\CSE499\blazer3d\glad\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Desktop\schoolwork\CSE499\blazer3d\glfw;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glm;D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glfw\include;D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glad\include;D:\Desktop\schoolwork\CSE499\blazer3d\Blazer3dviewport\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glfw\build\src\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -161,6 +161,11 @@
     <ClInclude Include="..\include\bBufferObjects.h" />
     <ClInclude Include="..\include\bVertexArrayObjects.h" />
     <ClInclude Include="..\include\constants.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\vendor\glfw\build\ALL_BUILD.vcxproj">
+      <Project>{104733dd-4c8a-37f2-a35c-806e2719b944}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
