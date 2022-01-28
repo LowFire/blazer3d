@@ -82,8 +82,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Desktop\schoolwork\CSE499\blazer3d\Blazer3dviewport\include;D:\Desktop\schoolwork\CSE499\blazer3d\glm;D:\Desktop\schoolwork\CSE499\blazer3d\glfw\include;D:\Desktop\schoolwork\CSE499\blazer3d\glad\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Desktop\schoolwork\CSE499\blazer3d\glfw;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glm;D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glfw\include;D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glad\include;D:\Desktop\schoolwork\CSE499\blazer3d\Blazer3dviewport\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glfw\build\src\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
