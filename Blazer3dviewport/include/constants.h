@@ -1,3 +1,3 @@
 #pragma once
 
-#define NULL_TERMINATED -1
+#define B_NULL_TERMINATED -1
