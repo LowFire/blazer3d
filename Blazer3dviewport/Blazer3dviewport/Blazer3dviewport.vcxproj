@@ -80,6 +80,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glm;D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glfw\include;D:\Desktop\schoolwork\CSE499\blazer3d\vendor\glad\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -151,6 +152,11 @@
     <ClInclude Include="..\include\bBufferObjects.h" />
     <ClInclude Include="..\include\bVertexArrayObjects.h" />
     <ClInclude Include="..\include\constants.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\vendor\glfw\build\ALL_BUILD.vcxproj">
+      <Project>{104733dd-4c8a-37f2-a35c-806e2719b944}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
