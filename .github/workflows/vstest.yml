@@ -11,6 +11,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       id: checkout_code
+    
+    - name: Init and update submodules
+      id: update_submodules
+      run: |
+        git submodule init
+        git submodule update
       
     - name: Add cmake to PATH
       id: setup_cmake
