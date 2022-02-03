@@ -18,7 +18,7 @@ jobs:
 
     - name: Build
       id: build
-      working-directory: blazer3d\Blazer3dviewport
+      working-directory: \blazer3d\Blazer3dviewport
       run: msbuild .\Blazer3dviewport.sln
      
     - name: Setup VSTest path
