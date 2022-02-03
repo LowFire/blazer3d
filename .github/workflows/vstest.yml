@@ -14,7 +14,7 @@ jobs:
       
     - name: Add cmake to PATH
       id: setup_cmake
-      uses: jwlawson/actions-setup-cmake@1.12
+      uses: jwlawson/actions-setup-cmake@v1.12
       with:
         cmake-version: latest
         
