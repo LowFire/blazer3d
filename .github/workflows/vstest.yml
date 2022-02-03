@@ -43,5 +43,5 @@ jobs:
       
     - name: Run VSTest
       id: run_vstest
-      working-directory: $\x64\debug\
-      run: vstest.console.exe /Platform:x64 .\UnitTests1.dll
+      working-directory: Blazer3dviewport\x64\Debug\
+      run: vstest.console.exe /Platform:x64 .\UnitTest1.dll
