@@ -2,31 +2,30 @@ name: MSBuild
 
 on: [push]
 
-env:
-  SOLUTION_FILE_PATH: .
-  BUILD_CONFIGURATION: Release
-
 jobs:
   run-msbuild-vstest:
     runs-on: windows-latest
     name: Run MSBuild and VSTest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+      id: checkout_code
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
-
-    - name: Restore NuGet packages
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      id: setup_msbuild
 
     - name: Build
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      id: build
+      working-directory: $
+      run: msbuild .\Blazer3dviewport.sln
      
     - name: Setup VSTest path
       uses: darenm/Setup-VSTest@v1
+      id: setup_vstest
       
     - name: Run VSTest
-      run: vstest.console.exe /Platform:x64 .\path\to\dll
+      id: run_vstest
+      working-directory: $\x64\debug\
+      run: vstest.console.exe /Platform:x64 .\UnitTests1.dll
