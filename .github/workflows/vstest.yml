@@ -18,7 +18,7 @@ jobs:
 
     - name: Build
       id: build
-      working-directory: $
+      working-directory: $GITHUB_WORKSPACE\Blazer3dviewport
       run: msbuild .\Blazer3dviewport.sln
      
     - name: Setup VSTest path
