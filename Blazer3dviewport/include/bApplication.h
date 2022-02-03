@@ -8,25 +8,30 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+namespace Blazer3dviewport {
+	class TestbApplication;
+}
+
 class bApplication {
+	friend class Blazer3dviewport::TestbApplication;
 private:
 
 	class bWindow {
 	private:
 		GLFWwindow* window;
+		const char* name;
 		int width;
 		int height;
 
 	public:
 		
-		bWindow(int width = 800, int height = 640, const char* name = "Blazer 3D") {
+		bWindow() : width(800), height(640), name("Blazer 3D"){
 			window = glfwCreateWindow(width, height, name, NULL, NULL);
-			this->width = width;
-			this->height = height;
 		}
 
 		bWindow(const bWindow& copy) {
 			this->window = copy.window;
+			this->name = copy.name;
 			this->width = copy.width;
 			this->height = copy.height;
 		}
