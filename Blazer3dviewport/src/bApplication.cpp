@@ -18,8 +18,10 @@ bool bApplication::init() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
 	//Create windows
-	windows.insert(std::pair<const char*, std::unique_ptr<bWindow>>(
-		"main", std::unique_ptr<bWindow>(new bWindow())));
+	windows.insert(std::pair<std::string, std::unique_ptr<bWindow>>(
+		"main",
+		new bWindow()
+		));
 
 	if (windows.at("main")->getWindow() == nullptr) {
 		std::cout << "Failed to create window" << std::endl;
