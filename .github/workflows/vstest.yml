@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   run-msbuild-vstest:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows]
     name: Run MSBuild and VSTest
 
     steps:
