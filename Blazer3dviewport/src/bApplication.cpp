@@ -6,7 +6,6 @@ void bApplication::run() {
 		glfwPollEvents();
 		glfwSwapBuffers(windows.at("main")->getWindow());
 	}
-	glfwTerminate();
 }
 
 bool bApplication::init() {
@@ -25,7 +24,6 @@ bool bApplication::init() {
 
 	if (windows.at("main")->getWindow() == nullptr) {
 		std::cout << "Failed to create window" << std::endl;
-		glfwTerminate();
 		return false;
 	}
 	

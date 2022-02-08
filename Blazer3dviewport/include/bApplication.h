@@ -8,12 +8,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace Blazer3dviewport {
+namespace TestOpenglWrapperAPI {
 	class TestbApplication;
 }
 
 class bApplication {
-	friend class Blazer3dviewport::TestbApplication;
+	friend class TestOpenglWrapperAPI::TestbApplication;
 private:
 
 	class bWindow {
@@ -54,4 +54,5 @@ private:
 public:
 	void run();
 	bool init();
+	void close() { glfwTerminate(); }
 };
