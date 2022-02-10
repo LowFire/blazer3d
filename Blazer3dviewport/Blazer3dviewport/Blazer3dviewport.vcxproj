@@ -165,6 +165,7 @@
     <ClInclude Include="..\include\bBufferObjects.h" />
     <ClInclude Include="..\include\bVertexArrayObjects.h" />
     <ClInclude Include="..\include\constants.h" />
+    <ClInclude Include="..\include\VertexArray.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\vendor\glfw\build\ALL_BUILD.vcxproj">

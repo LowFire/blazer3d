@@ -2,11 +2,11 @@
 #include "CppUnitTest.h"
 
 #include <memory>
-#include <array>
+#include <vector>
 #include <string>
 
 #include "bApplication.h"
-#include "bVertexArrayObjects.h"
+#include "VertexArray.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -184,4 +184,163 @@ namespace TestOpenglWrapperAPI
 	//		}
 	//	}
 	//};
+
+	TEST_CLASS(TestVertexArray)
+	{
+	private:
+		static bApplication test_application;
+
+	public:
+
+		TEST_CLASS_INITIALIZE(InitApplication)
+		{
+			test_application.init();
+		}
+
+		TEST_CLASS_CLEANUP(DestroyApplication)
+		{
+			test_application.close();
+		}
+
+		TEST_METHOD(testDefaultConstructor)
+		{
+			VertexArray v_arr;
+			//There should be no vertex attributes in the VAO
+			Assert::AreEqual(0, v_arr.vertex_attributes.size());
+			Assert::AreEqual(0, v_arr.attribute_indexes.size());
+
+			//Was the opengl name set properly?
+			Assert::AreEqual(1, v_arr.getOpenglName());
+			Assert::AreEqual("1", v_arr.getLabel());
+
+			GLchar* label = new GLchar[v_arr.getLabel().size()];
+			glGetObjectLabel(GL_VERTEX_ARRAY,
+				v_arr.getOpenglName(),
+				v_arr.getLabel().size(),
+				NULL,
+				label);
+			Assert::AreEqual(label, v_arr.getLabel());
+			delete[] label;
+		}
+
+		TEST_METHOD(testCopyConstructor)
+		{
+			VertexArray v_arr1;
+			v_arr1.createAttribute("Positions", 4, GL_FLOAT, false, 0, (void*)(0));
+			v_arr1.createAttribute("Color", 3, GL_FLOAT, false, sizeof(float)*7, (void*)(sizeof(float)*4));
+			v_arr1.createAttribute("UV", 3, GL_FLOAT, false, sizeof(float)*7, (void*)(sizeof(float)*7));
+			VertexArray v_arr2 = v_arr1;
+
+			//The two objects should have the same attributes.
+			Assert::AreEqual(v_arr1.vertex_attributes.size(), v_arr2.vertex_attributes.size());
+			Assert::AreEqual(v_arr1.attribute_indexes.size(), v_arr2.attribute_indexes.size());
+
+			//Those attributes should also have the same values
+			auto it1 = v_arr1.vertex_attributes.begin();
+			auto it2 = v_arr2.vertex_attributes.begin();
+			for (; it1 != v_arr1.vertex_attributes.end() && 
+				it2 != v_arr2.vertex_attributes.end(); 
+				it1++, it2++)
+			{
+				Assert::AreEqual(it1->name, it2->name);
+				Assert::AreEqual(it1->index, it2->index);
+				Assert::AreEqual(it1->normalized, it2->normalized);
+				Assert::AreEqual(it1->type, it2->type);
+				Assert::AreEqual(it1->size, it2->size);
+				Assert::AreEqual(it1->offset, it2->offset);
+				Assert::AreEqual(it1->stride, it2->stride);
+			}
+
+			//Test to make sure both objects contain the same attribute indexes
+			auto attrib_id1 = v_arr1.attribute_indexes.begin();
+			auto attrib_id2 = v_arr2.attribute_indexes.begin();
+			for (; attrib_id1 != v_arr1.attribute_indexes.end() && 
+				attrib_id2 != v_arr2.attribute_indexes.end(); 
+				attrib_id1++, attrib_id2++)
+			{
+				Assert::AreEqual(*attrib_id1, *attrib_id2);
+			}
+
+			//They should NOT have the same opengl names or labels
+			Assert::AreNotEqual(v_arr1.getOpenglName(), v_arr2.getOpenglName());
+			Assert::AreNotEqual(v_arr1.getLabel(), v_arr2.getLabel());
+
+			//Make sure the object lables for both objects are properly set
+			GLchar* vao1_label = new GLchar[v_arr1.getLabel().size()];
+			glGetObjectLabel(GL_VERTEX_ARRAY,
+				v_arr1.getOpenglName(),
+				v_arr1.getLabel().size(),
+				NULL,
+				vao1_label);
+			Assert::AreEqual(label, v_arr1.getLabel());
+			delete[] vao1_label;
+
+			GLchar* vao2_label = new GLchar[v_arr2.getLabel().size()];
+			glGetObjectLabel(GL_VERTEX_ARRAY,
+				v_arr2.getOpenglName(),
+				v_arr2.getLabel().size(),
+				NULL,
+				vao2_label);
+			Assert::AreEqual(label, v_arr2.getLabel());
+			delete[] vao2_label;
+		}
+
+		TEST_METHOD(testNameConstructor)
+		{
+			VertexArray v_arr("SoldierModel");
+
+			//Test if the label was set properly
+			Assert::AreEqual("SoldierModel", v_arr.getLabel());
+			GLchar* label = new GLchar[v_arr.getLabel().size()];
+			glGetObjectLabel(GL_VERTEX_ARRAY,
+				v_arr.getOpenglName(),
+				v_arr.getLabel().size(),
+				NULL,
+				label);
+			Assert::AreEqual(label, v_arr.getLabel());
+			delete[] label;
+
+			//There should be no vertex attributes in the VAO
+			Assert::AreEqual(0, v_arr.vertex_attributes.size());
+			Assert::AreEqual(0, v_arr.attribute_indexes.size());
+			
+			//Was the opengl name set properly?
+			Assert::AreEqual(1, v_arr.getOpenglName());
+		}
+		
+		TEST_METHOD(testInitListConstructor)
+		{
+
+		}
+
+		TEST_METHOD(testBind)
+		{
+
+		}
+
+		TEST_METHOD(testEnableAndDisableAttribute)
+		{
+
+		}
+
+		TEST_METHOD(testSetGenericAttribute)
+		{
+
+		}
+
+		TEST_METHOD(testGetOpenglName)
+		{
+
+		}
+
+		TEST_METHOD(testSetAndGetLabel)
+		{
+
+		}
+
+		TEST_METHOD(testCreateAttribute)
+		{
+
+		}
+	};
 }
