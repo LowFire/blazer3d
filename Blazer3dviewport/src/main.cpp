@@ -12,5 +12,10 @@ int main() {
 	bool ok = application.init();
 	if (ok)
 		application.run();
-	else return -1;
+	else {
+		application.close();
+		return -1;
+	}
+
+	application.close();
 }
