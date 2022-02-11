@@ -310,22 +310,128 @@ namespace TestOpenglWrapperAPI
 		
 		TEST_METHOD(testInitListConstructor)
 		{
+			VertexArray v_arr {
+				{ "Positions", 0, 4, GL_FLOAT, false, 0, (void*)(0) },
+				{ "Color", 1, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
+				{ "UV", 2, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 7) }
+			};
 
+			//Test if all vertex attributes have been initialized properly
+			Assert::AreEqual("Positions", v_arr.getAttribute(0).name.c_str());
+			Assert::AreEqual(0, v_arr.getAttribute(0).index);
+			Assert::AreEqual(4, v_arr.getAttribute(0).size);
+			Assert::AreEqual(GL_FLOAT, (int)v_arr.getAttribute(0).type);
+			Assert::AreEqual(false, (bool)v_arr.getAttribute(0).normalized);
+			Assert::AreEqual(0, v_arr.getAttribute(0).stride);
+			Assert::AreEqual((const void*)(0), v_arr.getAttribute(0).offset);
+
+			Assert::AreEqual("Color", v_arr.getAttribute(1).name.c_str());
+			Assert::AreEqual(1, v_arr.getAttribute(1).index);
+			Assert::AreEqual(3, v_arr.getAttribute(1).size);
+			Assert::AreEqual(GL_FLOAT, (int)v_arr.getAttribute(1).type);
+			Assert::AreEqual(false, (bool)v_arr.getAttribute(1).normalized);
+			Assert::AreEqual((GLsizei)(sizeof(float) * 7), v_arr.getAttribute(1).stride);
+			Assert::AreEqual((void*)(sizeof(float) * 4), v_arr.getAttribute(1).offset);
+
+			Assert::AreEqual("UV", v_arr.getAttribute(2).name.c_str());
+			Assert::AreEqual(2, v_arr.getAttribute(2).index);
+			Assert::AreEqual(3, v_arr.getAttribute(2).size);
+			Assert::AreEqual(GL_FLOAT, (int)v_arr.getAttribute(2).type);
+			Assert::AreEqual(false, (bool)v_arr.getAttribute(2).normalized);
+			Assert::AreEqual((GLsizei)(sizeof(float) * 7), v_arr.getAttribute(2).stride);
+			Assert::AreEqual((void*)(sizeof(float) * 7), v_arr.getAttribute(2).offset);
 		}
 
-		TEST_METHOD(testBind)
+		TEST_METHOD(testBindAndUnbind)
 		{
-
+			VertexArray v_arr1;
+			VertexArray v_arr2;
+			v_arr1.bind();
+			Assert::IsTrue(v_arr1.isBound());
+			Assert::IsFalse(v_arr2.isBound());
+			v_arr2.bind();
+			Assert::IsFalse(v_arr1.isBound());
+			Assert::IsTrue(v_arr2.isBound());
+			v_arr1.unbind(); //This call should not unbind the currently bound VAO.
+			Assert::IsTrue(v_arr2.isBound());
+			v_arr2.unbind();
+			Assert::IsFalse(v_arr2.isBound());
 		}
 
 		TEST_METHOD(testEnableAndDisableAttribute)
 		{
+			VertexArray v_arr {
+				{ "Positions", 0, 4, GL_FLOAT, false, 0, (void*)(0) },
+				{ "Color", 1, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
+				{ "UV", 2, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 7) }
+			};
 
+			v_arr.bind();
+
+			v_arr.enableAttribute("Positions");
+			v_arr.enableAttribute("Color");
+			v_arr.enableAttribute(2); //test if indexing works.
+
+			for each (auto v in v_arr.vertex_attributes)
+			{
+				GLint state;
+				glGetVertexAttribiv(v.index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &state);
+				Assert::IsFalse(state == GL_TRUE ? true : false);
+			}
+
+			v_arr.disableAttribute("Positions");
+			v_arr.disableAttribute("Color");
+			v_arr.disableAttribute(2);
+
+			for each (auto v in v_arr.vertex_attributes)
+			{
+				GLint state;
+				glGetVertexAttribiv(v.index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &state);
+				Assert::IsFalse(state == GL_TRUE ? true : false);
+			}
 		}
 
 		TEST_METHOD(testSetGenericAttribute)
 		{
+			VertexArray v_arr {
+				{ "Positions", 0, 4, GL_FLOAT, false, 0, (void*)(0) },
+				{ "Color", 1, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
+			};
 
+			//Test with a brace list of values.
+			v_arr.setGenericAttribute("Color", { 0.5f, 0.2f, 0.0f });
+			v_arr.setGenericAttribute(0, { 5.0f, 5.0f, 2.0f });
+
+			float* actualPos;
+			float* expectedPos = new float[]{ 5.0f, 5.0f, 2.0f };
+			glGetVertexAttribfv(v_arr.getAttribute("Positions").index, GL_CURRENT_VERTEX_ATTRIB, actualPos);
+
+			bool same = true;
+			for (int i = 0; i < 3; i++)
+			{
+				if (expectedPos[i] != actualPos[i]) {
+					same = false;
+					break;
+				}
+			}
+			Assert::IsTrue(same);
+
+			float* actualCol;
+			float* expectedCol = new float[] { 0.5f, 0.2f, 0.0f };
+			glGetVertexAttribfv(v_arr.getAttribute("Color").index, GL_CURRENT_VERTEX_ATTRIB, actualCol);
+
+			same = true;
+			for (int i = 0; i < 3; i++)
+			{
+				if (expectedPos[i] != actualPos[i]) {
+					same = false;
+					break;
+				}
+			}
+			Assert::IsTrue(same);
+
+			delete[] expectedPos;
+			delete[] expectedCol;
 		}
 
 		TEST_METHOD(testGetOpenglName)
@@ -339,6 +445,41 @@ namespace TestOpenglWrapperAPI
 		}
 
 		TEST_METHOD(testCreateAttribute)
+		{
+
+		}
+
+		TEST_METHOD(testGetAttribute)
+		{
+
+		}
+
+		TEST_METHOD(testSetAttributeName)
+		{
+
+		}
+
+		TEST_METHOD(testSetAttributeSize)
+		{
+
+		}
+
+		TEST_METHOD(testSetAttributeNormalized)
+		{
+
+		}
+
+		TEST_METHOD(testSetAttributeType)
+		{
+
+		}
+
+		TEST_METHOD(testSetAttributeOffset)
+		{
+
+		}
+
+		TEST_METHOD(testSetAttributeStride)
 		{
 
 		}
