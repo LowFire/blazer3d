@@ -20,7 +20,7 @@ public:
 		GLenum type;
 		GLboolean normalized;
 		GLsizei stride;
-		const void* offset;
+		void* offset;
 	};
 
 private:

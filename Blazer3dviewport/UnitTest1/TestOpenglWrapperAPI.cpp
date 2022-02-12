@@ -206,8 +206,8 @@ namespace TestOpenglWrapperAPI
 		{
 			VertexArray v_arr;
 			//There should be no vertex attributes in the VAO
-			Assert::AreEqual(0, v_arr.vertex_attributes.size());
-			Assert::AreEqual(0, v_arr.attribute_indexes.size());
+			Assert::AreEqual(0, (int)v_arr.vertex_attributes.size());
+			Assert::AreEqual(0, (int)v_arr.attribute_indexes.size());
 
 			//Was the opengl name set properly?
 			Assert::AreEqual(1, v_arr.getOpenglName());
@@ -576,12 +576,48 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testSetAttributeOffset)
 		{
+			VertexArray v_arr;
+			v_arr.createAttribute("Positions",
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)(0));
 
+			v_arr.setAttributeOffset("Positions", sizeof(float) * 3);
+			Assert::AreEqual((const void*)(sizeof(float) * 3), (const void*)v_arr.vertex_attributes.at(0).offset);
+			GLint offset;
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_RELATIVE_OFFSET, &offset);
+			Assert::AreEqual((const void*)offset, (const void*)v_arr.vertex_attributes.at(0).offset);
+
+			v_arr.setAttributeOffset(0, 0);
+			Assert::AreEqual((const void*)(0), (const void*)v_arr.vertex_attributes.at(0).offset);
+			GLint offset;
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_RELATIVE_OFFSET, &offset);
+			Assert::AreEqual((const void*)offset, (const void*)v_arr.vertex_attributes.at(0).offset);
 		}
 
 		TEST_METHOD(testSetAttributeStride)
 		{
+			VertexArray v_arr;
+			v_arr.createAttribute("Positions",
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)(0));
 
+			v_arr.setAttributeStride("Positions", sizeof(float) * 3);
+			Assert::AreEqual((GLsizei)(sizeof(float) * 3), v_arr.vertex_attributes.at(0).stride);
+			GLint stride;
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			Assert::AreEqual(stride, v_arr.vertex_attributes.at(0).stride);
+
+			v_arr.setAttributeStride(0, 0);
+			Assert::AreEqual(0, v_arr.vertex_attributes.at(0).stride);
+			GLint stride;
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			Assert::AreEqual(stride, v_arr.vertex_attributes.at(0).stride);
 		}
 	};
 }
