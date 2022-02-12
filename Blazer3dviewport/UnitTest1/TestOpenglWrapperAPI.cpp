@@ -436,42 +436,142 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testGetOpenglName)
 		{
+			VertexArray v_arr1;
+			VertexArray v_arr2;
 
+			Assert::AreEqual(1, v_arr1.getOpenglName());
+			Assert::AreEqual(2, v_arr2.getOpenglName());
 		}
 
 		TEST_METHOD(testSetAndGetLabel)
 		{
+			VertexArray v_arr("CharacterModel");
 
+			Assert::AreEqual("CharacterModel", v_arr.getLabel());
+			v_arr.setLabel("PlayerModel");
+			Assert::AreEqual("PlayerModel", v_arr.getLabel());
 		}
 
-		TEST_METHOD(testCreateAttribute)
+		TEST_METHOD(testCreateAndGetAttribute)
 		{
+			VertexArray v_arr;
+			
+			v_arr.createAttribute("Positions", 
+				3, 
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)(0));
 
-		}
+			VertexArray::VertexAttribute expected { "Positions", 0, 3, GL_FLOAT, GL_FALSE, 0, (void*)(0) };
+			VertexArray::VertexAttribute actual = v_arr.getAttribute("Positions");
+			
+			Assert::AreEqual(expected.name, actual.name);
+			Assert::AreEqual(expected.index, actual.index);
+			Assert::AreEqual(expected.type, actual.type);
+			Assert::AreEqual(expected.normalized, actual.normalized);
+			Assert::AreEqual(expected.stride, actual.stride);
+			Assert::AreSame(expected.offset, actual.offset);
 
-		TEST_METHOD(testGetAttribute)
-		{
+			v_arr.createAttribute("Colors",
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				sizeof(float) * 3,
+				(void*)(sizeof(float) * 3));
 
+			expected = { "Colors", 1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(sizeof(float) * 3) };
+			actual = v_arr.getAttribute(1);
+
+			Assert::AreEqual(expected.name, actual.name);
+			Assert::AreEqual(expected.index, actual.index);
+			Assert::AreEqual(expected.type, actual.type);
+			Assert::AreEqual(expected.normalized, actual.normalized);
+			Assert::AreEqual(expected.stride, actual.stride);
+			Assert::AreSame(expected.offset, actual.offset);
 		}
 
 		TEST_METHOD(testSetAttributeName)
 		{
+			VertexArray v_arr;
+			v_arr.createAttribute("Positions",
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)(0));
 
+			v_arr.setAttributeName("Positions", "Pos");
+			Assert::AreEqual("Pos", v_arr.vertex_attributes.at(0).name.c_str());
+
+			v_arr.setAttributeName(0, "Positions");
+			Assert::AreEqual("Positions", v_arr.vertex_attributes.at(0).name.c_str());
 		}
 
 		TEST_METHOD(testSetAttributeSize)
 		{
+			VertexArray v_arr;
+			v_arr.createAttribute("Positions",
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)(0));
 
+			v_arr.setAttributeSize("Positions", 4);
+			Assert::AreEqual(4, v_arr.vertex_attributes.at(0).size);
+			GLint size;
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			Assert::AreEqual(size, v_arr.vertex_attributes.at(0).size);
+
+			v_arr.setAttributeSize(0, 3);
+			Assert::AreEqual(3, v_arr.vertex_attributes.at(0).size);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			Assert::AreEqual(size, v_arr.vertex_attributes.at(0).size);
 		}
 
 		TEST_METHOD(testSetAttributeNormalized)
 		{
+			VertexArray v_arr;
+			v_arr.createAttribute("Positions",
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)(0));
 
+			v_arr.setAttributeNormalized("Positions", true);
+			Assert::AreEqual((GLboolean)GL_TRUE, v_arr.vertex_attributes.at(0).normalized);
+			GLint normalized;
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			Assert::AreEqual((GLboolean)normalized, v_arr.vertex_attributes.at(0).normalized);
+
+			v_arr.setAttributeNormalized(0, false);
+			Assert::AreEqual((GLboolean)GL_FALSE, v_arr.vertex_attributes.at(0).normalized);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			Assert::AreEqual((GLboolean)normalized, v_arr.vertex_attributes.at(0).normalized)
 		}
 
 		TEST_METHOD(testSetAttributeType)
 		{
+			VertexArray v_arr;
+			v_arr.createAttribute("Positions",
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)(0));
 
+			v_arr.setAttributeType("Positions", GL_INT);
+			Assert::AreEqual((GLenum)GL_INT, v_arr.vertex_attributes.at(0).type);
+			GLint type;
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			Assert::AreEqual((GLenum)type, v_arr.vertex_attributes.at(0).type);
+
+			v_arr.setAttributeNormalized(0, GL_FLOAT);
+			Assert::AreEqual((GLenum)GL_FLOAT, v_arr.vertex_attributes.at(0).type);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			Assert::AreEqual((GLenum)type, v_arr.vertex_attributes.at(0).type);
 		}
 
 		TEST_METHOD(testSetAttributeOffset)
