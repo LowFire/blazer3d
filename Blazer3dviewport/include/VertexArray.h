@@ -22,6 +22,7 @@ public:
 		GLboolean normalized;
 		GLsizei stride;
 		void* offset;
+		bool enabled = false;
 	};
 
 private:
@@ -29,6 +30,7 @@ private:
 	std::string label;
 	std::map<std::string, VertexAttribute> vertex_attributes;
 	std::vector<GLuint> attribute_indexes;
+	static GLuint current_bound_vao;
 
 public:
 	//Constructors
@@ -49,26 +51,26 @@ public:
 	void disableAttribute(GLuint index);
 
 	template<typename T>
-	void setGenericAttribute(const std::string& label, T value)
+	static void setGenericAttribute(const std::string& label, T value)
 	{
 
 	}
 
 	template<typename T>
-	void setGenericAttribute(const std::string& label,
+	static void setGenericAttribute(const std::string& label,
 		std::initializer_list<T> value)
 	{
 
 	}
 
 	template<typename T>
-	void setGenericAttribute(GLuint index, T value)
+	static void setGenericAttribute(GLuint index, T value)
 	{
 
 	}
 
 	template<typename T>
-	void setGenericAttribute(GLuint index,
+	static void setGenericAttribute(GLuint index,
 		std::initializer_list<T> value)
 	{
 
