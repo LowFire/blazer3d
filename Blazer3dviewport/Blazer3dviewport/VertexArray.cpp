@@ -1,6 +1,9 @@
 #include "VertexArray.h"
 #include "constants.h"
 
+//Static variables
+GLuint VertexArray::current_bound_vao = 0;
+
 //Constructors
 VertexArray::VertexArray()
 {
