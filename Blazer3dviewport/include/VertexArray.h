@@ -1,9 +1,10 @@
 #pragma once
 
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <array>
+#include <algorithm>
 
 #include <glad/glad.h>
 
@@ -28,7 +29,7 @@ public:
 private:
 	GLuint opengl_name;
 	std::string label;
-	std::map<std::string, VertexAttribute> vertex_attributes;
+	std::unordered_map<std::string, VertexAttribute> vertex_attributes;
 	std::vector<GLuint> attribute_indexes;
 	static GLuint current_bound_vao;
 
@@ -46,9 +47,9 @@ public:
 	bool isBound();
 
 	void enableAttribute(const std::string& label);
-	void enableAttribute(GLuint index);
+	//void enableAttribute(GLuint index);
 	void disableAttribute(const std::string& label);
-	void disableAttribute(GLuint index);
+	//void disableAttribute(GLuint index);
 
 	template<typename T>
 	static void setGenericAttribute(const std::string& label, T value)
@@ -89,26 +90,26 @@ public:
 	void addAttributes();
 
 	VertexAttribute getAttribute(const std::string& name);
-	VertexAttribute getAttribute(GLuint index);
+	//VertexAttribute getAttribute(GLuint index);
 	template <int size>
 	std::array<VertexAttribute, size> getAllAttributes();
 
 	void setAttributeName(const std::string& name, 
 		const std::string& new_name);
-	void setAttributeName(GLuint index);
+	//void setAttributeName(GLuint index);
 
 	void setAttributeSize(const std::string& name, GLint size);
-	void setAttributeSize(GLuint index, GLint size);
+	//void setAttributeSize(GLuint index, GLint size);
 
 	void setAttributeNormalized(const std::string& name, GLboolean normalized);
-	void setAttributeNormalized(GLuint index, GLboolean normalized);
+	//void setAttributeNormalized(GLuint index, GLboolean normalized);
 
 	void setAttributeType(const std::string& name, GLenum type);
-	void setAttributeType(GLuint index, GLenum type);
+	//void setAttributeType(GLuint index, GLenum type);
 
 	void setAttributeOffset(const std::string& name, GLint offset);
-	void setAttributeOffset(GLuint index, GLint offset);
+	//void setAttributeOffset(GLuint index, GLint offset);
 
 	void setAttributeStride(const std::string& name, GLsizei stride);
-	void setAttributeStride(GLuint index, GLsizei stride);
+	//void setAttributeStride(GLuint index, GLsizei stride);
 };
