@@ -106,7 +106,7 @@ public:
 	void setAttributeType(const std::string& name, GLenum type);
 	//void setAttributeType(GLuint index, GLenum type);
 
-	void setAttributeOffset(const std::string& name, GLint offset);
+	void setAttributeOffset(const std::string& name, void* offset);
 	//void setAttributeOffset(GLuint index, GLint offset);
 
 	void setAttributeStride(const std::string& name, GLsizei stride);

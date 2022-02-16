@@ -204,7 +204,15 @@ void VertexArray::setAttributeName(const std::string& name,
 
 void VertexArray::setAttributeSize(const std::string& name, GLint size)
 {
-
+	bind();
+	vertex_attributes.at(name).size = size;
+	glVertexAttribPointer(vertex_attributes.at(name).index,
+		vertex_attributes.at(name).size,
+		vertex_attributes.at(name).type,
+		vertex_attributes.at(name).normalized,
+		vertex_attributes.at(name).stride,
+		vertex_attributes.at(name).offset);
+	unbind();
 }
 //void VertexArray::setAttributeSize(GLuint index, GLint size)
 //{
@@ -239,9 +247,17 @@ void VertexArray::setAttributeType(const std::string& name, GLenum type)
 //
 //}
 
-void VertexArray::setAttributeOffset(const std::string& name, GLint offset)
+void VertexArray::setAttributeOffset(const std::string& name, void* offset)
 {
-
+	bind();
+	vertex_attributes.at(name).offset = offset;
+	glVertexAttribPointer(vertex_attributes.at(name).index,
+		vertex_attributes.at(name).size,
+		vertex_attributes.at(name).type,
+		vertex_attributes.at(name).normalized,
+		vertex_attributes.at(name).stride,
+		vertex_attributes.at(name).offset);
+	unbind();
 }
 
 //void VertexArray::setAttributeOffset(GLuint index, GLint offset)

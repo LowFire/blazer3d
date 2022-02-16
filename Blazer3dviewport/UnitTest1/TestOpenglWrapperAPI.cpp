@@ -719,6 +719,7 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testSetAttributeSize)
 		{
+
 			VertexArray v_arr;
 			v_arr.createAttribute("Positions",
 				3,
@@ -730,13 +731,35 @@ namespace TestOpenglWrapperAPI
 			v_arr.setAttributeSize("Positions", 4);
 			Assert::AreEqual(4, v_arr.vertex_attributes.at("Positions").size);
 			GLint size;
+			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
 			Assert::AreEqual(size, v_arr.vertex_attributes.at("Positions").size);
 
-			v_arr.setAttributeSize(0, 3);
+			v_arr.setAttributeSize("Positions", 3);
 			Assert::AreEqual(3, v_arr.vertex_attributes.at("Positions").size);
+			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
 			Assert::AreEqual(size, v_arr.vertex_attributes.at("Positions").size);
+
+			//Make sure the rest of the attributes are the same.
+			v_arr.bind();
+			GLint type;
+			void* offset;
+			GLint normalized;
+			GLint stride;
+			GLint enabled;
+
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribPointerv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual((void*)(0), offset);
+			Assert::AreEqual(0, stride);
+			Assert::IsFalse(enabled);
+			v_arr.unbind();
 		}
 
 		TEST_METHOD(testSetAttributeNormalized)
@@ -763,10 +786,38 @@ namespace TestOpenglWrapperAPI
 			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
 			Assert::AreEqual((GLboolean)normalized, v_arr.vertex_attributes.at("Positions").normalized);
+
+			//Make sure the rest of the attributes are the same.
+			v_arr.bind();
+			GLint size;
+			GLint type;
+			void* offset;
+			GLint stride;
+			GLint enabled;
+
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribPointerv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+
+			Assert::AreEqual(3, size);
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual((void*)(0), offset);
+			Assert::AreEqual(0, stride);
+			Assert::IsFalse(enabled);
+			v_arr.unbind();
 		}
 
 		TEST_METHOD(testSetAttributeType)
 		{
+			//Init some dummy data to make opengl happy.
+			GLuint buffer;
+			glCreateBuffers(1, &buffer);
+			glBindBuffer(GL_ARRAY_BUFFER, buffer);
+			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
+
 			VertexArray v_arr;
 			v_arr.createAttribute("Positions",
 				3,
@@ -789,6 +840,13 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testSetAttributeOffset)
 		{
+			//Init some dummy data to make opengl happy.
+			GLuint buffer;
+			glCreateBuffers(1, &buffer);
+			glBindBuffer(GL_ARRAY_BUFFER, buffer);
+			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
+
 			VertexArray v_arr;
 			v_arr.createAttribute("Positions",
 				3,
@@ -797,16 +855,39 @@ namespace TestOpenglWrapperAPI
 				0,
 				(void*)(0));
 
-			v_arr.setAttributeOffset("Positions", sizeof(float) * 3);
+			v_arr.setAttributeOffset("Positions", (void*)(sizeof(float) * 3));
 			Assert::AreEqual((void*)(sizeof(float) * 3), v_arr.vertex_attributes.at("Positions").offset);
 			void* offset;
+			v_arr.bind();
 			glGetVertexAttribPointerv(0, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
 			Assert::AreEqual(offset, v_arr.vertex_attributes.at("Positions").offset);
 
-			v_arr.setAttributeOffset(0, 0);
+			v_arr.setAttributeOffset("Positions", 0);
 			Assert::AreEqual((void*)(0), v_arr.vertex_attributes.at("Positions").offset);
+			v_arr.bind();
 			glGetVertexAttribPointerv(0, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
 			Assert::AreEqual(offset, v_arr.vertex_attributes.at("Positions").offset);
+
+			//Make sure the rest of the attributes are the same.
+			v_arr.bind();
+			GLint size;
+			GLint type;
+			GLint normalized;
+			GLint stride;
+			GLint enabled;
+
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+
+			Assert::AreEqual(3, size);
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(0, stride);
+			Assert::IsFalse(enabled);
+			v_arr.unbind();
 		}
 
 		TEST_METHOD(testSetAttributeStride)
