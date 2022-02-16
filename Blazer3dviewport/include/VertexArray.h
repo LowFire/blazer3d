@@ -1,10 +1,9 @@
 #pragma once
 
-#include <vector>
+#include <unordered_set>
 #include <unordered_map>
 #include <string>
 #include <array>
-#include <algorithm>
 
 #include <glad/glad.h>
 
@@ -30,7 +29,7 @@ private:
 	GLuint opengl_name;
 	std::string label;
 	std::unordered_map<std::string, VertexAttribute> vertex_attributes;
-	std::vector<GLuint> attribute_indexes;
+	std::unordered_set<GLuint> attribute_indexes;
 	static GLuint current_bound_vao;
 
 public:

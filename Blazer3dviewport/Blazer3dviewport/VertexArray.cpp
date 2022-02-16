@@ -35,7 +35,6 @@ VertexArray::VertexArray(const VertexArray& copy)
 	this->label = std::to_string(opengl_name);
 	this->attribute_indexes = copy.attribute_indexes;
 	this->vertex_attributes = copy.vertex_attributes;
-	std::sort(this->attribute_indexes.begin(), this->attribute_indexes.end());
 	glObjectLabel(GL_VERTEX_ARRAY,
 		opengl_name,
 		B_NULL_TERMINATED,
@@ -66,12 +65,11 @@ VertexArray::VertexArray(std::initializer_list<VertexArray::VertexAttribute>l)
 	{
 		auto new_entry = std::make_pair(a.name, a);
 		vertex_attributes.insert(new_entry);
-		attribute_indexes.push_back(a.index);
+		attribute_indexes.insert(a.index);
 
 		//Set attributes
 		glVertexAttribPointer(a.index, a.size, a.type, a.normalized, a.stride, a.offset);
 	}
-	std::sort(attribute_indexes.begin(), attribute_indexes.end());
 	unbind();
 }
 
@@ -152,29 +150,8 @@ void VertexArray::createAttribute(const std::string& name,
 {
 	//Get a unique index.
 	GLuint new_index = 0;
-
-	if (attribute_indexes.size() == 0)
-	{
-		attribute_indexes.push_back(new_index);
-	}
-	else
-	{
-		for (auto i = attribute_indexes.begin(); i != attribute_indexes.end(); i++)
-		{
-			if (new_index != *i)
-			{
-				attribute_indexes.push_back(new_index);
-				break;
-			}
-			new_index++;
-			if (i + 1 == attribute_indexes.end())
-			{
-				attribute_indexes.push_back(new_index);
-				break;
-			}
-		}
-		std::sort(attribute_indexes.begin(), attribute_indexes.end());
-	}
+	while (!attribute_indexes.insert(new_index).second)
+		new_index++;
 
 	VertexArray::VertexAttribute new_attribute { name, new_index, size, type, normalized, stride, offset };
 	auto new_entry = std::make_pair(name, new_attribute);
@@ -213,7 +190,11 @@ std::array<VertexArray::VertexAttribute, size> VertexArray::getAllAttributes()
 void VertexArray::setAttributeName(const std::string& name,
 	const std::string& new_name)
 {
-
+	VertexArray::VertexAttribute new_attrib = vertex_attributes.at(name);
+	new_attrib.name = new_name;
+	auto new_entry = std::make_pair(new_name, new_attrib);
+	vertex_attributes.erase(name);
+	vertex_attributes.insert(new_entry);
 }
 
 //void VertexArray::setAttributeName(GLuint index)
