@@ -213,7 +213,15 @@ void VertexArray::setAttributeSize(const std::string& name, GLint size)
 
 void VertexArray::setAttributeNormalized(const std::string& name, GLboolean normalized)
 {
-
+	bind();
+	vertex_attributes.at(name).normalized = normalized;
+	glVertexAttribPointer(vertex_attributes.at(name).index,
+		vertex_attributes.at(name).size,
+		vertex_attributes.at(name).type,
+		vertex_attributes.at(name).normalized,
+		vertex_attributes.at(name).stride,
+		vertex_attributes.at(name).offset);
+	unbind();
 }
 
 //void VertexArray::setAttributeNormalized(GLuint index, GLboolean normalized)

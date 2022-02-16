@@ -741,6 +741,7 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testSetAttributeNormalized)
 		{
+
 			VertexArray v_arr;
 			v_arr.createAttribute("Positions",
 				3,
@@ -749,14 +750,17 @@ namespace TestOpenglWrapperAPI
 				0,
 				(void*)(0));
 
+
 			v_arr.setAttributeNormalized("Positions", true);
 			Assert::AreEqual((GLboolean)GL_TRUE, v_arr.vertex_attributes.at("Positions").normalized);
 			GLint normalized;
+			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
 			Assert::AreEqual((GLboolean)normalized, v_arr.vertex_attributes.at("Positions").normalized);
 
-			v_arr.setAttributeNormalized(0, false);
+			v_arr.setAttributeNormalized("Positions", false);
 			Assert::AreEqual((GLboolean)GL_FALSE, v_arr.vertex_attributes.at("Positions").normalized);
+			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
 			Assert::AreEqual((GLboolean)normalized, v_arr.vertex_attributes.at("Positions").normalized);
 		}
