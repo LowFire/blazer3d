@@ -51,30 +51,87 @@ public:
 	//void disableAttribute(GLuint index);
 
 	template<typename T>
-	static void setGenericAttribute(const std::string& label, T value)
+	static void setGenericAttribute(const GLuint index, T value)
 	{
-
+		glVertexAttrib3f(index, value, value, value);
+	}	
+	
+	template<typename T>
+	static void setGenericAttribute(const GLuint index, T value[])
+	{
+		int size = sizeof(value) / sizeof(T);
+		switch (size)
+		{
+		case 1:
+			glVertexAttrib1f(index, value[0]);
+		case 2:
+			glVertexAttrib2f(index, value[0], value[1]);
+		case 3:
+			glVertexAttrib3f(index, value[0], value[1], value[2]);
+		case 4:
+			glVertexAttrib4f(index, value[0], value[1], value[2], value[3]);
+		}
 	}
 
 	template<typename T>
-	static void setGenericAttribute(const std::string& label,
-		std::initializer_list<T> value)
+	static void setGenericAttribute(const GLuint index,
+		std::initializer_list<T> l)
 	{
-
+		auto it = l.begin();
+		switch (l.size())
+		{
+		case 1:
+			glVertexAttrib1f(index, *it);
+		case 2:
+			glVertexAttrib2f(index, *it, *(it + 1));
+		case 3:
+			glVertexAttrib3f(index, *it, *(it + 1), *(it + 2));
+		case 4:
+			glVertexAttrib4f(index, *it, *(it + 1), *(it + 2), *(it + 3));
+		}
 	}
 
-	template<typename T>
-	static void setGenericAttribute(GLuint index, T value)
-	{
+	//template<typename T>
+	//static void setGenericAttribute(const std::string& label, T value)
+	//{
+	//	glVertexAttrib3f(vertex_attributes.at(label).index,
+	//		value, value, value);
+	//}
 
-	}
+	//template<typename T>
+	//static void setGenericAttribute(const std::string& label, T value[])
+	//{
+	//	int size = sizeof(value) / sizeof(T);
+	//	switch (size)
+	//	{
+	//	case 1:
+	//		glVertexAttrib1f(vertex_attributes.at(label).index, value[0]);
+	//	case 2:
+	//		glVertexAttrib2f(vertex_attributes.at(label).index, value[0], value[1]);
+	//	case 3:
+	//		glVertexAttrib3f(vertex_attributes.at(label).index, value[0], value[1], value[2]);
+	//	case 4:
+	//		glVertexAttrib4f(vertex_attributes.at(label).index, value[0], value[1], value[2], value[3]);
+	//	}
+	//}
 
-	template<typename T>
-	static void setGenericAttribute(GLuint index,
-		std::initializer_list<T> value)
-	{
-
-	}
+	//template<typename T>
+	//static void setGenericAttribute(const std::string& label,
+	//	std::initializer_list<T> l)
+	//{
+	//	auto it = l.begin();
+	//	switch (l.size())
+	//	{
+	//	case 1:
+	//		glVertexAttrib1f(vertex_attributes.at(label).index, *it);
+	//	case 2:
+	//		glVertexAttrib2f(vertex_attributes.at(label).index, *it, *(it + 1));
+	//	case 3:
+	//		glVertexAttrib3f(vertex_attributes.at(label).index, *it, *(it + 1), *(it + 2));
+	//	case 4:
+	//		glVertexAttrib4f(vertex_attributes.at(label).index, *it, *(it + 1), *(it + 2), *(it + 3));
+	//	}
+	//}
 
 	GLuint getOpenglName() { return opengl_name; };
 	std::string getLabel() { return label; };

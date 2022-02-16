@@ -527,10 +527,10 @@ namespace TestOpenglWrapperAPI
 			v_arr.enableAttribute("Color");
 			v_arr.enableAttribute("UV");
 
+			v_arr.bind();
 			for each (auto v in v_arr.vertex_attributes)
 			{
 				VertexArray::VertexAttribute attrib = v.second;
-				v_arr.bind();
 				GLint state;
 				glGetVertexAttribiv(attrib.index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &state);
 				Assert::IsTrue(state == GL_TRUE ? true : false);
@@ -540,10 +540,10 @@ namespace TestOpenglWrapperAPI
 			v_arr.disableAttribute("Color");
 			v_arr.disableAttribute("UV");
 
+			v_arr.bind();
 			for each (auto v in v_arr.vertex_attributes)
 			{
 				VertexArray::VertexAttribute attrib = v.second;
-				v_arr.bind();
 				GLint state;
 				glGetVertexAttribiv(attrib.index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &state);
 				Assert::IsFalse(state == GL_TRUE ? true : false);
@@ -552,21 +552,17 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testSetGenericAttribute)
 		{
-			VertexArray v_arr {
-				{ "Positions", 0, 4, GL_FLOAT, false, 0, (void*)(0) },
-				{ "Color", 1, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
-			};
 
 			//Test with a brace list of values.
-			v_arr.setGenericAttribute("Color", { 0.5f, 0.2f, 0.0f });
-			v_arr.setGenericAttribute(0, { 5.0f, 5.0f, 2.0f });
+			VertexArray::setGenericAttribute(1, { 0.5f, 0.2f, 0.0f });
+			VertexArray::setGenericAttribute(0, { 5.0f, 5.0f, 2.0f });
 
-			float actualPos[4];
-			float* expectedPos = new float[]{ 5.0f, 5.0f, 2.0f, 0.0f };
-			glGetVertexAttribfv(v_arr.getAttribute("Positions").index, GL_CURRENT_VERTEX_ATTRIB, actualPos);
+			float actualPos[3];
+			float* expectedPos = new float[]{ 5.0f, 5.0f, 2.0f };
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actualPos);
 
 			bool same = true;
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < 3; i++)
 			{
 				if (expectedPos[i] != actualPos[i]) {
 					same = false;
@@ -575,12 +571,12 @@ namespace TestOpenglWrapperAPI
 			}
 			Assert::IsTrue(same);
 
-			float actualCol[4];
+			float actualCol[3];
 			float* expectedCol = new float[] { 0.5f, 0.2f, 0.0f };
-			glGetVertexAttribfv(v_arr.getAttribute("Color").index, GL_CURRENT_VERTEX_ATTRIB, actualCol);
+			glGetVertexAttribfv(1, GL_CURRENT_VERTEX_ATTRIB, actualCol);
 
 			same = true;
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < 3; i++)
 			{
 				if (expectedPos[i] != actualPos[i]) {
 					same = false;
@@ -591,6 +587,135 @@ namespace TestOpenglWrapperAPI
 
 			delete[] expectedPos;
 			delete[] expectedCol;
+
+			//Test single value init list
+			VertexArray::setGenericAttribute(1, { 1.0f });
+			VertexArray::setGenericAttribute(0, { 2.0f });
+
+			float* expected = new float[] {1.0f, 0.0f, 0.0f, 0.0f };
+			float actual[4];
+			glGetVertexAttribfv(1, GL_CURRENT_VERTEX_ATTRIB, actual);
+			Assert::AreEqual(expected[0], actual[0]);
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actual);
+			expected[0] = 2.0f;
+			Assert::AreEqual(expected[0], actual[0]);
+			delete[] expected;
+
+			//Test two value init list
+			VertexArray::setGenericAttribute(1, { 1.0f, 0.5f });
+			VertexArray::setGenericAttribute(0, { 2.0f, 3.0f });
+
+			float* expected2 = new float[] {1.0f, 0.5f};
+			glGetVertexAttribfv(1, GL_CURRENT_VERTEX_ATTRIB, actual);
+			same = true;
+			for (int i = 0; i < 2; i++)
+			{
+				if (expected2[i] != actual[i]) {
+					same = false;
+					break;
+				}
+			}
+			Assert::IsTrue(same);
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actual);
+			expected2[0] = 2.0f; expected2[1] = 3.0f;
+			same = true;
+			for (int i = 0; i < 2; i++)
+			{
+				if (expected2[i] != actual[i]) {
+					same = false;
+					break;
+				}
+			}
+			Assert::IsTrue(same);
+			delete[] expected2;
+
+			//Test 4 value init list
+			VertexArray::setGenericAttribute(1, { 2.0f, 1.0f, 1.3f, 1.0f });
+			VertexArray::setGenericAttribute(0, { 1.0f, 4.0f, 3.0f, 1.0f });
+
+			float* expected4 = new float[] { 2.0f, 1.0f, 1.3f, 1.0f };
+			glGetVertexAttribfv(1, GL_CURRENT_VERTEX_ATTRIB, actual);
+			same = true;
+			for (int i = 0; i < 4; i++)
+			{
+				if (expected4[i] != actual[i]) {
+					same = false;
+					break;
+				}
+			}
+			Assert::IsTrue(same);
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actual);
+			expected4[0] = 1.0f; expected4[1] = 4.0f; expected4[2] = 3.0f, expected4[3] = 1.0f;
+			same = true;
+			for (int i = 0; i < 4; i++)
+			{
+				if (expected4[i] != actual[i]) {
+					same = false;
+					break;
+				}
+			}
+			Assert::IsTrue(same);
+			delete[] expected4;
+
+			//Test 1 value array
+			float pos1[1] = { 4.0f };
+			VertexArray::setGenericAttribute(0, pos1);
+
+			float* expected_arr1 = new float[] {4.0f};
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actual);
+			Assert::AreEqual(expected_arr1[0], actual[0]);
+			delete[] expected_arr1;
+
+			//Test 2 value array
+			float pos2[2] = { 3.0f, 5.0f };
+			VertexArray::setGenericAttribute(0, pos2);
+
+			float* expected_arr2 = new float[] { 3.0f, 5.0f };
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actual);
+			Assert::AreEqual(expected_arr2[0], actual[0]);
+			Assert::AreEqual(expected_arr2[1], actual[1]);
+			delete[] expected_arr2;
+
+			//Test 3 value array
+			float pos3[3] = { 1.0f, 6.0f, 2.0f };
+			VertexArray::setGenericAttribute(0, pos3);
+
+			float* expected_arr3 = new float[] { 1.0f, 6.0f, 2.0f };
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actual);
+			Assert::AreEqual(expected_arr3[0], actual[0]);
+			Assert::AreEqual(expected_arr3[1], actual[1]);
+			Assert::AreEqual(expected_arr3[2], actual[2]);
+			delete[] expected_arr3;
+
+			//Test 4 value array
+			float pos4[4] = { 1.0f, 5.0f, 3.0f, 1.0f };
+			VertexArray::setGenericAttribute(0, pos4);
+
+			float* expected_arr4 = new float[] { 1.0f, 5.0f, 3.0f, 1.0f };
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actual);
+			Assert::AreEqual(expected_arr4[0], actual[0]);
+			Assert::AreEqual(expected_arr4[1], actual[1]);
+			Assert::AreEqual(expected_arr4[2], actual[2]);
+			Assert::AreEqual(expected_arr4[3], actual[3]);
+			delete[] expected_arr4;
+
+			//Test single float scalar value
+			VertexArray::setGenericAttribute(0, 4.0f);
+			float* expected_floatscalar = new float[] { 4.0f, 4.0f, 4.0f };
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actual);
+			Assert::AreEqual(expected_floatscalar[0], actual[0]);
+			Assert::AreEqual(expected_floatscalar[1], actual[1]);
+			Assert::AreEqual(expected_floatscalar[2], actual[2]);
+			delete[] expected_floatscalar;
+
+			//Test single integer scalar value
+			VertexArray::setGenericAttribute(0, 3);
+			float* expected_intscalar = new float[] { 3.0f, 3.0f, 3.0f };
+			glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, actual);
+			Assert::AreEqual(expected_intscalar[0], actual[0]);
+			Assert::AreEqual(expected_intscalar[1], actual[1]);
+			Assert::AreEqual(expected_intscalar[2], actual[2]);
+			delete[] expected_intscalar;
 		}
 
 		TEST_METHOD(testGetOpenglName)
