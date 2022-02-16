@@ -811,12 +811,12 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testSetAttributeType)
 		{
-			//Init some dummy data to make opengl happy.
-			GLuint buffer;
-			glCreateBuffers(1, &buffer);
-			glBindBuffer(GL_ARRAY_BUFFER, buffer);
-			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
+			////Init some dummy data to make opengl happy.
+			//GLuint buffer;
+			//glCreateBuffers(1, &buffer);
+			//glBindBuffer(GL_ARRAY_BUFFER, buffer);
+			//float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+			//glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 
 			VertexArray v_arr;
 			v_arr.createAttribute("Positions",
@@ -829,13 +829,36 @@ namespace TestOpenglWrapperAPI
 			v_arr.setAttributeType("Positions", GL_INT);
 			Assert::AreEqual((GLenum)GL_INT, v_arr.vertex_attributes.at("Positions").type);
 			GLint type;
+			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
 			Assert::AreEqual((GLenum)type, v_arr.vertex_attributes.at("Positions").type);
 
-			v_arr.setAttributeNormalized(0, GL_FLOAT);
+			v_arr.setAttributeType("Positions", GL_FLOAT);
 			Assert::AreEqual((GLenum)GL_FLOAT, v_arr.vertex_attributes.at("Positions").type);
+			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
 			Assert::AreEqual((GLenum)type, v_arr.vertex_attributes.at("Positions").type);
+
+			//Make sure the rest of the attributes are the same.
+			v_arr.bind();
+			GLint size;
+			GLint stride;
+			void* offset;
+			GLint normalized;
+			GLint enabled;
+
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribPointerv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual((void*)(0), offset);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(3, size);
+			Assert::IsFalse(enabled);
+			v_arr.unbind();
 		}
 
 		TEST_METHOD(testSetAttributeOffset)
@@ -903,13 +926,36 @@ namespace TestOpenglWrapperAPI
 			v_arr.setAttributeStride("Positions", sizeof(float) * 3);
 			Assert::AreEqual((GLsizei)(sizeof(float) * 3), v_arr.vertex_attributes.at("Positions").stride);
 			GLint stride;
+			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
 			Assert::AreEqual(stride, v_arr.vertex_attributes.at("Positions").stride);
 
-			v_arr.setAttributeStride(0, 0);
+			v_arr.setAttributeStride("Positions", 0);
 			Assert::AreEqual(0, v_arr.vertex_attributes.at("Positions").stride);
+			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
 			Assert::AreEqual(stride, v_arr.vertex_attributes.at("Positions").stride);
+
+			//Make sure the rest of the attributes are the same.
+			v_arr.bind();
+			GLint size;
+			GLint type;
+			void* offset;
+			GLint normalized;
+			GLint enabled;
+
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribPointerv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+			glGetVertexAttribiv(v_arr.vertex_attributes.at("Positions").index, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual((void*)(0), offset);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(3, size);
+			Assert::IsFalse(enabled);
+			v_arr.unbind();
 		}
 	};
 }

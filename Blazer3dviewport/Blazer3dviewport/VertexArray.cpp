@@ -239,7 +239,15 @@ void VertexArray::setAttributeNormalized(const std::string& name, GLboolean norm
 
 void VertexArray::setAttributeType(const std::string& name, GLenum type)
 {
-
+	bind();
+	vertex_attributes.at(name).type = type;
+	glVertexAttribPointer(vertex_attributes.at(name).index,
+		vertex_attributes.at(name).size,
+		vertex_attributes.at(name).type,
+		vertex_attributes.at(name).normalized,
+		vertex_attributes.at(name).stride,
+		vertex_attributes.at(name).offset);
+	unbind();
 }
 
 //void VertexArray::setAttributeType(GLuint index, GLenum type)
@@ -267,7 +275,15 @@ void VertexArray::setAttributeOffset(const std::string& name, void* offset)
 
 void VertexArray::setAttributeStride(const std::string& name, GLsizei stride)
 {
-
+	bind();
+	vertex_attributes.at(name).stride = stride;
+	glVertexAttribPointer(vertex_attributes.at(name).index,
+		vertex_attributes.at(name).size,
+		vertex_attributes.at(name).type,
+		vertex_attributes.at(name).normalized,
+		vertex_attributes.at(name).stride,
+		vertex_attributes.at(name).offset);
+	unbind();
 }
 
 //void VertexArray::setAttributeStride(GLuint index, GLsizei stride)
