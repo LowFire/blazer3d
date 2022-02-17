@@ -1,6 +1,5 @@
 #pragma once
 
-#include <unordered_set>
 #include <unordered_map>
 #include <string>
 #include <array>
@@ -28,8 +27,8 @@ public:
 private:
 	GLuint opengl_name;
 	std::string label;
-	std::unordered_map<std::string, VertexAttribute> vertex_attributes;
-	std::unordered_set<GLuint> attribute_indexes;
+	std::unordered_map<GLuint, VertexAttribute> vertex_attributes;
+	std::unordered_map<std::string, GLuint> attribute_names;
 	static GLuint current_bound_vao;
 
 public:
@@ -138,12 +137,15 @@ public:
 	void setLabel(std::string label);
 
 	void createAttribute(const std::string& name,
+		GLuint index,
 		GLint size,
 		GLenum type,
 		GLboolean normalized,
 		GLsizei stride,
 		void* offset);
-	void addAttributes();
+
+	void addAttributes(std::initializer_list<VertexAttribute> l);
+	void addAttributes(VertexAttribute& attrib);
 
 	VertexAttribute getAttribute(const std::string& name);
 	//VertexAttribute getAttribute(GLuint index);
