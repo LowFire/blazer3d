@@ -145,7 +145,7 @@ public:
 		void* offset);
 
 	void addAttributes(std::initializer_list<VertexAttribute> l);
-	void addAttributes(VertexAttribute& attrib);
+	void addAttributes(VertexAttribute attrib);
 
 	VertexAttribute getAttribute(const std::string& name);
 	//VertexAttribute getAttribute(GLuint index);

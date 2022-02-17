@@ -171,12 +171,83 @@ void VertexArray::createAttribute(const std::string& name,
 
 void VertexArray::addAttributes(std::initializer_list<VertexArray::VertexAttribute> l)
 {
+	for (auto a : l)
+	{
+		if (!attribute_names.count(a.name) &&
+			!vertex_attributes.count(a.index))
+		{
+			auto new_entry = std::make_pair(a.index, a);
+			vertex_attributes.insert(new_entry);
+			auto new_name = std::make_pair(a.name, a.index);
+			attribute_names.insert(new_name);
+		}
+		else if (attribute_names.count(a.name))
+		{
+			a.index = attribute_names.at(a.name);
+			vertex_attributes.erase(a.index);
+			auto new_entry = std::make_pair(a.index, a);
+			vertex_attributes.insert(new_entry);
+		}
+		else
+		{
+			auto old_name = vertex_attributes.at(a.index).name;
+			attribute_names.erase(old_name);
+			vertex_attributes.erase(a.index);
+			auto new_entry = std::make_pair(a.index, a);
+			vertex_attributes.insert(new_entry);
+			auto new_name = std::make_pair(a.name, a.index);
+			attribute_names.insert(new_name);
+		}
 
+		//Update attribute pointer
+		bind();
+		glVertexAttribPointer(a.index, 
+			a.size, 
+			a.type, 
+			a.normalized, 
+			a.stride, 
+			a.offset);
+		unbind();
+	}
 }
 
-void VertexArray::addAttributes(VertexArray::VertexAttribute& attrib)
+void VertexArray::addAttributes(VertexArray::VertexAttribute attrib)
 {
+	if (!attribute_names.count(attrib.name) &&
+		!vertex_attributes.count(attrib.index))
+	{
+		auto new_entry = std::make_pair(attrib.index, attrib);
+		vertex_attributes.insert(new_entry);
+		auto new_name = std::make_pair(attrib.name, attrib.index);
+		attribute_names.insert(new_name);
+	}
+	else if (attribute_names.count(attrib.name))
+	{
+		attrib.index = attribute_names.at(attrib.name);
+		vertex_attributes.erase(attrib.index);
+		auto new_entry = std::make_pair(attrib.index, attrib);
+		vertex_attributes.insert(new_entry);
+	}
+	else
+	{
+		auto old_name = vertex_attributes.at(attrib.index).name;
+		attribute_names.erase(old_name);
+		vertex_attributes.erase(attrib.index);
+		auto new_entry = std::make_pair(attrib.index, attrib);
+		vertex_attributes.insert(new_entry);
+		auto new_name = std::make_pair(attrib.name, attrib.index);
+		attribute_names.insert(new_name);
+	}
 
+	//Update attribute pointer
+	bind();
+	glVertexAttribPointer(attrib.index, 
+		attrib.size, 
+		attrib.type, 
+		attrib.normalized, 
+		attrib.stride, 
+		attrib.offset);
+	unbind();
 }
 
 VertexArray::VertexAttribute VertexArray::getAttribute(const std::string& name)
