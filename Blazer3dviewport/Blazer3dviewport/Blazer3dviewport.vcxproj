@@ -157,14 +157,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\vendor\glad\src\glad.c" />
     <ClCompile Include="..\src\bApplication.cpp" />
-    <ClCompile Include="..\src\bVertexArrayObjects.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\bApplication.h" />
     <ClInclude Include="..\include\bBufferObjects.h" />
-    <ClInclude Include="..\include\bVertexArrayObjects.h" />
     <ClInclude Include="..\include\constants.h" />
     <ClInclude Include="..\include\VertexArray.h" />
   </ItemGroup>
