@@ -227,7 +227,6 @@ namespace TestOpenglWrapperAPI
 			Assert::IsTrue(glIsVertexArray(v_arr.opengl_name));
 			//There should be no vertex attributes in the VAO
 			Assert::AreEqual(0, (int)v_arr.vertex_attributes.size());
-			Assert::AreEqual(0, (int)v_arr.attribute_names.size());
 
 			//Was the opengl name set properly?
 			Assert::AreEqual((GLuint)1, v_arr.getOpenglName());
@@ -254,9 +253,9 @@ namespace TestOpenglWrapperAPI
 			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 
-			v_arr1.createAttribute("Positions", 0, 4, GL_FLOAT, false, 0, (void*)(0));
-			v_arr1.createAttribute("Color", 1, 3, GL_FLOAT, false, sizeof(float)*7, (void*)(sizeof(float)*4));
-			v_arr1.createAttribute("UV", 2, 3, GL_FLOAT, false, sizeof(float)*7, (void*)(sizeof(float)*7));
+			v_arr1.createAttribute(0, 4, GL_FLOAT, false, 0, (void*)(0));
+			v_arr1.createAttribute(1, 3, GL_FLOAT, false, sizeof(float)*7, (void*)(sizeof(float)*4));
+			v_arr1.createAttribute(2, 3, GL_FLOAT, false, sizeof(float)*7, (void*)(sizeof(float)*7));
 			VertexArray v_arr2 = v_arr1;
 
 			//Test if the two objects were created and bound.
@@ -265,7 +264,6 @@ namespace TestOpenglWrapperAPI
 
 			//The two objects should have the same attributes.
 			Assert::AreEqual(v_arr1.vertex_attributes.size(), v_arr2.vertex_attributes.size());
-			Assert::AreEqual(v_arr1.attribute_names.size(), v_arr2.attribute_names.size());
 
 			//Those attributes should also have the same values
 			auto it1 = v_arr1.vertex_attributes.begin();
@@ -276,7 +274,6 @@ namespace TestOpenglWrapperAPI
 			{
 				VertexArray::VertexAttribute attrb1 = it1->second;
 				VertexArray::VertexAttribute attrb2 = it2->second;
-				Assert::AreEqual(attrb1.name, attrb2.name);
 				Assert::AreEqual(attrb1.index, attrb2.index);
 				Assert::AreEqual(attrb1.normalized, attrb2.normalized);
 				Assert::AreEqual(attrb1.type, attrb2.type);
@@ -287,7 +284,7 @@ namespace TestOpenglWrapperAPI
 
 			//Test if the vertex attribute propeties are set in the context.
 			v_arr2.bind();
-			for (auto a : v_arr2.vertex_attributes)
+			for (const auto& a : v_arr2.vertex_attributes)
 			{
 				auto attrib = a.second;
 				GLint size;
@@ -314,22 +311,6 @@ namespace TestOpenglWrapperAPI
 				Assert::IsFalse(enabled);
 			}
 			v_arr2.unbind();
-
-			//Test to make sure both objects contain the same attribute names and indexes
-			auto attrib_id1 = v_arr1.attribute_names.begin();
-			auto attrib_id2 = v_arr2.attribute_names.begin();
-			for (; attrib_id1 != v_arr1.attribute_names.end() && 
-				attrib_id2 != v_arr2.attribute_names.end(); 
-				attrib_id1++, attrib_id2++)
-			{
-				auto name1 = attrib_id1->first;
-				auto name2 = attrib_id2->first;
-				auto index1 = attrib_id1->second;
-				auto index2 = attrib_id2->second;
-
-				Assert::AreEqual(name1, name2);
-				Assert::AreEqual(index1, index2);
-			}
 
 			//They should NOT have the same opengl names or labels
 			Assert::AreNotEqual(v_arr1.getOpenglName(), v_arr2.getOpenglName());
@@ -375,7 +356,6 @@ namespace TestOpenglWrapperAPI
 
 			//There should be no vertex attributes in the VAO
 			Assert::AreEqual(0, (int)v_arr.vertex_attributes.size());
-			Assert::AreEqual(0, (int)v_arr.attribute_names.size());
 			
 			//Was the opengl name set properly?
 			Assert::AreEqual((GLuint)1, v_arr.getOpenglName());
@@ -391,9 +371,9 @@ namespace TestOpenglWrapperAPI
 			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 
 			VertexArray v_arr {
-				{ "Positions", 0, 3, GL_FLOAT, false, 0, (void*)(0) },
-				{ "Color", 1, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
-				{ "UV", 2, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 7) }
+				{ 0, 3, GL_FLOAT, false, 0, (void*)(0) },
+				{ 1, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
+				{ 2, 3, GL_FLOAT, false, sizeof(float) * 7, (void*)(sizeof(float) * 7) }
 			};
 
 			//Test if the label was set properly.
@@ -410,38 +390,30 @@ namespace TestOpenglWrapperAPI
 			Assert::IsTrue(glIsVertexArray(v_arr.opengl_name));
 
 			//Test if all vertex attributes have been initialized properly
-			Assert::AreEqual("Positions", v_arr.getAttribute("Positions").name.c_str());
-			Assert::AreEqual((GLuint)0, v_arr.getAttribute("Positions").index);
-			Assert::AreEqual(3, v_arr.getAttribute("Positions").size);
-			Assert::AreEqual(GL_FLOAT, (int)v_arr.getAttribute("Positions").type);
-			Assert::AreEqual(false, (bool)v_arr.getAttribute("Positions").normalized);
-			Assert::AreEqual(0, v_arr.getAttribute("Positions").stride);
-			Assert::AreEqual((void*)(0), v_arr.getAttribute("Positions").offset);
+			Assert::AreEqual((GLuint)0, v_arr.getAttribute(0).index);
+			Assert::AreEqual(3, v_arr.getAttribute(0).size);
+			Assert::AreEqual(GL_FLOAT, (int)v_arr.getAttribute(0).type);
+			Assert::AreEqual(false, (bool)v_arr.getAttribute(0).normalized);
+			Assert::AreEqual(0, v_arr.getAttribute(0).stride);
+			Assert::AreEqual((void*)(0), v_arr.getAttribute(0).offset);
 
-			Assert::AreEqual("Color", v_arr.getAttribute("Color").name.c_str());
-			Assert::AreEqual((GLuint)1, v_arr.getAttribute("Color").index);
-			Assert::AreEqual(3, v_arr.getAttribute("Color").size);
-			Assert::AreEqual(GL_FLOAT, (int)v_arr.getAttribute("Color").type);
-			Assert::AreEqual(false, (bool)v_arr.getAttribute("Color").normalized);
-			Assert::AreEqual((GLsizei)(sizeof(float) * 7), v_arr.getAttribute("Color").stride);
-			Assert::AreEqual((void*)(sizeof(float) * 4), v_arr.getAttribute("Color").offset);
+			Assert::AreEqual((GLuint)1, v_arr.getAttribute(1).index);
+			Assert::AreEqual(3, v_arr.getAttribute(1).size);
+			Assert::AreEqual(GL_FLOAT, (int)v_arr.getAttribute(1).type);
+			Assert::AreEqual(false, (bool)v_arr.getAttribute(1).normalized);
+			Assert::AreEqual((GLsizei)(sizeof(float) * 7), v_arr.getAttribute(1).stride);
+			Assert::AreEqual((void*)(sizeof(float) * 4), v_arr.getAttribute(1).offset);
 
-			Assert::AreEqual("UV", v_arr.getAttribute("UV").name.c_str());
-			Assert::AreEqual((GLuint)2, v_arr.getAttribute("UV").index);
-			Assert::AreEqual(3, v_arr.getAttribute("UV").size);
-			Assert::AreEqual(GL_FLOAT, (int)v_arr.getAttribute("UV").type);
-			Assert::AreEqual(false, (bool)v_arr.getAttribute("UV").normalized);
-			Assert::AreEqual((GLsizei)(sizeof(float) * 7), v_arr.getAttribute("UV").stride);
-			Assert::AreEqual((void*)(sizeof(float) * 7), v_arr.getAttribute("UV").offset);
-
-			//Test if the names and indexes were stored
-			Assert::AreEqual((GLuint)0, v_arr.attribute_names.at("Positions"));
-			Assert::AreEqual((GLuint)1, v_arr.attribute_names.at("Color"));
-			Assert::AreEqual((GLuint)2, v_arr.attribute_names.at("UV"));
+			Assert::AreEqual((GLuint)2, v_arr.getAttribute(2).index);
+			Assert::AreEqual(3, v_arr.getAttribute(2).size);
+			Assert::AreEqual(GL_FLOAT, (int)v_arr.getAttribute(2).type);
+			Assert::AreEqual(false, (bool)v_arr.getAttribute(2).normalized);
+			Assert::AreEqual((GLsizei)(sizeof(float) * 7), v_arr.getAttribute(2).stride);
+			Assert::AreEqual((void*)(sizeof(float) * 7), v_arr.getAttribute(2).offset);
 
 			//Test if the vertex attribute propeties are set in the context.
 			v_arr.bind();
-			for (auto a : v_arr.vertex_attributes)
+			for (const auto& a : v_arr.vertex_attributes)
 			{
 				auto attrib = a.second;
 				GLint size;
@@ -475,9 +447,9 @@ namespace TestOpenglWrapperAPI
 			GLuint v_name;
 			{
 				VertexArray v_arr{
-					{ "Positions", 0, 4, GL_FLOAT, GL_FALSE, 0, (void*)(0) },
-					{ "Color", 1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
-					{ "UV", 2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void*)(sizeof(float) * 7) }
+					{ 0, 4, GL_FLOAT, GL_FALSE, 0, (void*)(0) },
+					{ 1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
+					{ 2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void*)(sizeof(float) * 7) }
 				};
 
 				v_name = v_arr.opengl_name;
@@ -529,17 +501,17 @@ namespace TestOpenglWrapperAPI
 		TEST_METHOD(testEnableAndDisableAttribute)
 		{
 			VertexArray v_arr {
-				{ "Positions", 0, 4, GL_FLOAT, GL_FALSE, 0, (void*)(0) },
-				{ "Color", 1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
-				{ "UV", 2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void*)(sizeof(float) * 7) }
+				{ 0, 4, GL_FLOAT, GL_FALSE, 0, (void*)(0) },
+				{ 1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void*)(sizeof(float) * 4) },
+				{ 2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void*)(sizeof(float) * 7) }
 			};
 
-			v_arr.enableAttribute("Positions");
-			v_arr.enableAttribute("Color");
-			v_arr.enableAttribute("UV");
+			v_arr.enableAttribute(0);
+			v_arr.enableAttribute(1);
+			v_arr.enableAttribute(2);
 
 			v_arr.bind();
-			for each (auto v in v_arr.vertex_attributes)
+			for each (const auto& v in v_arr.vertex_attributes)
 			{
 				VertexArray::VertexAttribute attrib = v.second;
 				GLint state;
@@ -547,9 +519,9 @@ namespace TestOpenglWrapperAPI
 				Assert::IsTrue(state == GL_TRUE ? true : false);
 			}
 
-			v_arr.disableAttribute("Positions");
-			v_arr.disableAttribute("Color");
-			v_arr.disableAttribute("UV");
+			v_arr.disableAttribute(0);
+			v_arr.disableAttribute(1);
+			v_arr.disableAttribute(2);
 
 			v_arr.bind();
 			for each (auto v in v_arr.vertex_attributes)
@@ -773,36 +745,32 @@ namespace TestOpenglWrapperAPI
 			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 			
-			v_arr.createAttribute("Positions",
-				0,
+			v_arr.createAttribute(0,
 				3, 
 				GL_FLOAT,
 				GL_FALSE,
 				0,
 				(void*)(0));
 
-			VertexArray::VertexAttribute expected { "Positions", 0, 3, GL_FLOAT, GL_FALSE, 0, (void*)(0) };
-			VertexArray::VertexAttribute actual = v_arr.getAttribute("Positions");
+			VertexArray::VertexAttribute expected { 0, 3, GL_FLOAT, GL_FALSE, 0, (void*)(0) };
+			VertexArray::VertexAttribute actual = v_arr.getAttribute(0);
 			
-			Assert::AreEqual(expected.name, actual.name);
 			Assert::AreEqual(expected.index, actual.index);
 			Assert::AreEqual(expected.type, actual.type);
 			Assert::AreEqual(expected.normalized, actual.normalized);
 			Assert::AreEqual(expected.stride, actual.stride);
 			Assert::AreEqual(expected.offset, actual.offset);
 
-			v_arr.createAttribute("Colors",
-				1,
+			v_arr.createAttribute(1,
 				3,
 				GL_FLOAT,
 				GL_FALSE,
 				sizeof(float) * 3,
 				(void*)(sizeof(float) * 3));
 
-			expected = { "Colors", 1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(sizeof(float) * 3) };
-			actual = v_arr.getAttribute("Colors");
+			expected = { 1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(sizeof(float) * 3) };
+			actual = v_arr.getAttribute(1);
 
-			Assert::AreEqual(expected.name, actual.name);
 			Assert::AreEqual(expected.index, actual.index);
 			Assert::AreEqual(expected.type, actual.type);
 			Assert::AreEqual(expected.normalized, actual.normalized);
@@ -811,7 +779,7 @@ namespace TestOpenglWrapperAPI
 
 			//Test if the vertex attribute properties are set in the context.
 			v_arr.bind();
-			for (auto a : v_arr.vertex_attributes)
+			for (const auto& a : v_arr.vertex_attributes)
 			{
 				auto attrib = a.second;
 				GLint size;
@@ -838,61 +806,27 @@ namespace TestOpenglWrapperAPI
 				Assert::IsFalse(enabled);
 			}
 			v_arr.unbind();
-
-			//Test to make sure the correct attribute names are stored
-			Assert::IsTrue(v_arr.attribute_names.count("Positions"));
-			Assert::IsTrue(v_arr.attribute_names.count("Colors"));
-		}
-
-		TEST_METHOD(testSetAttributeName)
-		{
-			VertexArray v_arr;
-			v_arr.createAttribute("Positions",
-				0,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				(void*)(0));
-
-			//Test if name is set properly
-			v_arr.setAttributeName("Positions", "Pos");
-			auto it = v_arr.attribute_names.find("Positions");
-			auto not_found = v_arr.attribute_names.end();
-			Assert::IsTrue(it == not_found ? true : false);
-			it = v_arr.attribute_names.find("Pos");
-			Assert::IsFalse(it == not_found ? true : false);
-			Assert::AreEqual("Pos", v_arr.vertex_attributes.at(0).name.c_str());
-
-			v_arr.setAttributeName("Pos", "Positions");
-			it = v_arr.attribute_names.find("Positions");
-			not_found = v_arr.attribute_names.end();
-			Assert::IsFalse(it == not_found ? true : false);
-			it = v_arr.attribute_names.find("Pos");
-			Assert::IsTrue(it == not_found ? true : false);
-			Assert::AreEqual("Positions", v_arr.vertex_attributes.at(0).name.c_str());
 		}
 
 		TEST_METHOD(testSetAttributeSize)
 		{
 
 			VertexArray v_arr;
-			v_arr.createAttribute("Positions",
-				0,
+			v_arr.createAttribute(0,
 				3,
 				GL_FLOAT,
 				GL_FALSE,
 				0,
 				(void*)(0));
 
-			v_arr.setAttributeSize("Positions", 4);
+			v_arr.setAttributeSize(0, 4);
 			Assert::AreEqual(4, v_arr.vertex_attributes.at(0).size);
 			GLint size;
 			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
 			Assert::AreEqual(size, v_arr.vertex_attributes.at(0).size);
 
-			v_arr.setAttributeSize("Positions", 3);
+			v_arr.setAttributeSize(0, 3);
 			Assert::AreEqual(3, v_arr.vertex_attributes.at(0).size);
 			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
@@ -923,8 +857,7 @@ namespace TestOpenglWrapperAPI
 		{
 
 			VertexArray v_arr;
-			v_arr.createAttribute("Positions",
-				0,
+			v_arr.createAttribute(0,
 				3,
 				GL_FLOAT,
 				GL_FALSE,
@@ -932,14 +865,14 @@ namespace TestOpenglWrapperAPI
 				(void*)(0));
 
 
-			v_arr.setAttributeNormalized("Positions", true);
+			v_arr.setAttributeNormalized(0, true);
 			Assert::AreEqual((GLboolean)GL_TRUE, v_arr.vertex_attributes.at(0).normalized);
 			GLint normalized;
 			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
 			Assert::AreEqual((GLboolean)normalized, v_arr.vertex_attributes.at(0).normalized);
 
-			v_arr.setAttributeNormalized("Positions", false);
+			v_arr.setAttributeNormalized(0, false);
 			Assert::AreEqual((GLboolean)GL_FALSE, v_arr.vertex_attributes.at(0).normalized);
 			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
@@ -971,22 +904,21 @@ namespace TestOpenglWrapperAPI
 		{
 
 			VertexArray v_arr;
-			v_arr.createAttribute("Positions",
-				0,
+			v_arr.createAttribute(0,
 				3,
 				GL_FLOAT,
 				GL_FALSE,
 				0,
 				(void*)(0));
 
-			v_arr.setAttributeType("Positions", GL_INT);
+			v_arr.setAttributeType(0, GL_INT);
 			Assert::AreEqual((GLenum)GL_INT, v_arr.vertex_attributes.at(0).type);
 			GLint type;
 			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
 			Assert::AreEqual((GLenum)type, v_arr.vertex_attributes.at(0).type);
 
-			v_arr.setAttributeType("Positions", GL_FLOAT);
+			v_arr.setAttributeType(0, GL_FLOAT);
 			Assert::AreEqual((GLenum)GL_FLOAT, v_arr.vertex_attributes.at(0).type);
 			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
@@ -1024,22 +956,21 @@ namespace TestOpenglWrapperAPI
 			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 
 			VertexArray v_arr;
-			v_arr.createAttribute("Positions",
-				0,
+			v_arr.createAttribute(0,
 				3,
 				GL_FLOAT,
 				GL_FALSE,
 				0,
 				(void*)(0));
 
-			v_arr.setAttributeOffset("Positions", (void*)(sizeof(float) * 3));
+			v_arr.setAttributeOffset(0, (void*)(sizeof(float) * 3));
 			Assert::AreEqual((void*)(sizeof(float) * 3), v_arr.vertex_attributes.at(0).offset);
 			void* offset;
 			v_arr.bind();
 			glGetVertexAttribPointerv(0, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
 			Assert::AreEqual(offset, v_arr.vertex_attributes.at(0).offset);
 
-			v_arr.setAttributeOffset("Positions", 0);
+			v_arr.setAttributeOffset(0, 0);
 			Assert::AreEqual((void*)(0), v_arr.vertex_attributes.at(0).offset);
 			v_arr.bind();
 			glGetVertexAttribPointerv(0, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
@@ -1070,22 +1001,21 @@ namespace TestOpenglWrapperAPI
 		TEST_METHOD(testSetAttributeStride)
 		{
 			VertexArray v_arr;
-			v_arr.createAttribute("Positions",
-				0,
+			v_arr.createAttribute(0,
 				3,
 				GL_FLOAT,
 				GL_FALSE,
 				0,
 				(void*)(0));
 
-			v_arr.setAttributeStride("Positions", sizeof(float) * 3);
+			v_arr.setAttributeStride(0, sizeof(float) * 3);
 			Assert::AreEqual((GLsizei)(sizeof(float) * 3), v_arr.vertex_attributes.at(0).stride);
 			GLint stride;
 			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
 			Assert::AreEqual(stride, v_arr.vertex_attributes.at(0).stride);
 
-			v_arr.setAttributeStride("Positions", 0);
+			v_arr.setAttributeStride(0, 0);
 			Assert::AreEqual(0, v_arr.vertex_attributes.at(0).stride);
 			v_arr.bind();
 			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
@@ -1124,15 +1054,13 @@ namespace TestOpenglWrapperAPI
 
 			VertexArray v_arr;
 			v_arr.addAttributes({
-				{ "Pos", 0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0 },
-				{ "Color", 1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(sizeof(float) * 3) }
+				{ 0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0 },
+				{ 1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(sizeof(float) * 3) }
 				});
 
 			//Test if the attributes were added
 			Assert::AreEqual(2, (int)v_arr.vertex_attributes.size());
-			Assert::AreEqual(2, (int)v_arr.attribute_names.size());
 
-			Assert::AreEqual("Pos", v_arr.vertex_attributes.at(0).name.c_str());
 			Assert::AreEqual((GLuint)0, v_arr.vertex_attributes.at(0).index);
 			Assert::AreEqual(3, v_arr.vertex_attributes.at(0).size);
 			Assert::AreEqual((GLenum)GL_FLOAT, v_arr.vertex_attributes.at(0).type);
@@ -1141,7 +1069,6 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((void*)0, v_arr.vertex_attributes.at(0).offset);
 			Assert::AreEqual(false, v_arr.vertex_attributes.at(0).enabled);
 
-			Assert::AreEqual("Color", v_arr.vertex_attributes.at(1).name.c_str());
 			Assert::AreEqual((GLuint)1, v_arr.vertex_attributes.at(1).index);
 			Assert::AreEqual(4, v_arr.vertex_attributes.at(1).size);
 			Assert::AreEqual((GLenum)GL_FLOAT, v_arr.vertex_attributes.at(1).type);
@@ -1150,13 +1077,9 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((void*)(sizeof(float) * 3), v_arr.vertex_attributes.at(1).offset);
 			Assert::AreEqual(false, v_arr.vertex_attributes.at(1).enabled);
 
-			//Test if names were stored
-			Assert::AreEqual((GLuint)0, v_arr.attribute_names.at("Pos"));
-			Assert::AreEqual((GLuint)1, v_arr.attribute_names.at("Color"));
-
 			//Test if the attributes were set in the context
 			v_arr.bind();
-			for (auto a : v_arr.vertex_attributes)
+			for (const auto& a : v_arr.vertex_attributes)
 			{
 				auto attrib = a.second;
 				GLint size;
@@ -1186,7 +1109,6 @@ namespace TestOpenglWrapperAPI
 
 			//Test if attributes are replaced when adding one with an index that already exists
 			VertexArray::VertexAttribute new_attrib { 
-				"UV", 
 				1, 
 				2, 
 				GL_FLOAT, 
@@ -1199,9 +1121,7 @@ namespace TestOpenglWrapperAPI
 
 			//Test if the number of attributes are the same
 			Assert::AreEqual(2, (int)v_arr.vertex_attributes.size());
-			Assert::AreEqual(2, (int)v_arr.attribute_names.size());
 
-			Assert::AreEqual("UV", v_arr.vertex_attributes.at(1).name.c_str());
 			Assert::AreEqual((GLuint)1, v_arr.vertex_attributes.at(1).index);
 			Assert::AreEqual(2, v_arr.vertex_attributes.at(1).size);
 			Assert::AreEqual((GLenum)GL_FLOAT, v_arr.vertex_attributes.at(1).type);
@@ -1231,50 +1151,6 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual(GL_FALSE, normalized);
 			Assert::AreEqual((GLsizei)(sizeof(float) * 3), stride);
 			Assert::AreEqual((void*)(sizeof(float) * 5), offset);
-			Assert::AreEqual(GL_FALSE, enabled);//They both should be false
-			Assert::IsFalse(enabled);
-
-
-			//Test if adding an attribute with the same name but different index as another attribute will replace it.
-			new_attrib = {
-				"UV",
-				3,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				sizeof(float) * 2,
-				(void*)(sizeof(float) * 3)
-			};
-
-			v_arr.addAttributes(new_attrib);
-
-			//Test if the number of attributes are the same
-			Assert::AreEqual(2, (int)v_arr.vertex_attributes.size());
-			Assert::AreEqual(2, (int)v_arr.attribute_names.size());
-
-			Assert::AreEqual("UV", v_arr.vertex_attributes.at(1).name.c_str());
-			Assert::AreEqual((GLuint)1, v_arr.vertex_attributes.at(1).index);
-			Assert::AreEqual(3, v_arr.vertex_attributes.at(1).size);
-			Assert::AreEqual((GLenum)GL_FLOAT, v_arr.vertex_attributes.at(1).type);
-			Assert::AreEqual((GLboolean)GL_FALSE, v_arr.vertex_attributes.at(1).normalized);
-			Assert::AreEqual((GLsizei)(sizeof(float) * 2), v_arr.vertex_attributes.at(1).stride);
-			Assert::AreEqual((void*)(sizeof(float) * 3), v_arr.vertex_attributes.at(1).offset);
-			Assert::AreEqual(false, v_arr.vertex_attributes.at(1).enabled);
-
-			//Test if it was set in the context
-			v_arr.bind();
-			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
-			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-			glGetVertexAttribPointerv(1, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
-			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-
-			Assert::AreEqual(3, size);
-			Assert::AreEqual(GL_FLOAT, type);
-			Assert::AreEqual(GL_FALSE, normalized);
-			Assert::AreEqual((GLsizei)(sizeof(float) * 2), stride);
-			Assert::AreEqual((void*)(sizeof(float) * 3), offset);
 			Assert::AreEqual(GL_FALSE, enabled);//They both should be false
 			Assert::IsFalse(enabled);
 		}
