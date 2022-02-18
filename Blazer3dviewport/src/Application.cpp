@@ -1,14 +1,14 @@
 
-#include "bApplication.h"
+#include "Application.h"
 
-void bApplication::run() {
+void Application::run() {
 	while (!glfwWindowShouldClose(windows.at("main")->getWindow())) {
 		glfwPollEvents();
 		glfwSwapBuffers(windows.at("main")->getWindow());
 	}
 }
 
-bool bApplication::init() {
+bool Application::init() {
 
 	glfwInit();
 
@@ -17,9 +17,9 @@ bool bApplication::init() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
 	//Create windows
-	windows.insert(std::pair<std::string, std::unique_ptr<bWindow>>(
+	windows.insert(std::pair<std::string, std::unique_ptr<Window>>(
 		"main",
-		new bWindow()
+		new Window()
 		));
 
 	if (windows.at("main")->getWindow() == nullptr) {
@@ -45,13 +45,13 @@ bool bApplication::init() {
 }
 
 //bWindow function implementations
-void bApplication::bWindow::setWindowSize(int width, int height) {
+void Application::Window::setWindowSize(int width, int height) {
 	this->width = width;
 	this->height = height;
 	glfwSetWindowSize(window, width, height);
 }
 
 template <typename T>
-void bApplication::bWindow::setCallback(const char* callback_name, T callback_function) {
+void Application::Window::setCallback(const char* callback_name, T callback_function) {
 
 }

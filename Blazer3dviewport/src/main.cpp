@@ -3,11 +3,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "bApplication.h"
+#include "Application.h"
 
 int main() {
 
-	bApplication application;
+	Application application;
 
 	bool ok = application.init();
 	if (ok)
