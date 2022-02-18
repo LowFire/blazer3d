@@ -133,12 +133,7 @@ void VertexArray::createAttribute(GLuint index,
 {
 	VertexArray::VertexAttribute new_attribute { index, size, type, normalized, stride, offset };
 	auto new_entry = std::make_pair(index, new_attribute);
-	vertex_attributes.insert(new_entry);
-
-	//Set state for attribute in vao
-	bind();
-	glVertexAttribPointer(index, size, type, normalized, stride, offset);
-	unbind();
+	addAttributes(new_attribute);
 }
 
 void VertexArray::addAttributes(std::initializer_list<VertexArray::VertexAttribute> l)
@@ -200,12 +195,15 @@ VertexArray::VertexAttribute VertexArray::getAttribute(GLuint index)
 		return attrib;
 }
 
-template <int size>
-std::array<VertexArray::VertexAttribute, size> VertexArray::getAllAttributes()
+std::vector<VertexArray::VertexAttribute> VertexArray::getAllAttributes()
 {
-	return std::array<VertexArray::VertexAttribute, 1>(
-		{ "0", 0, 4, GL_FLOAT, GL_FALSE, 0, (void*)(0) }
-	);
+	std::vector<VertexAttribute> arr;
+	for (const auto& a : vertex_attributes)
+	{
+		auto attrib = a.second;
+		arr.push_back(attrib);
+	}
+	return arr;
 }
 
 void VertexArray::setAttributeSize(GLuint index, GLint size)

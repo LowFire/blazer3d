@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 #include <string>
-#include <array>
+#include <vector>
 
 #include <glad/glad.h>
 
@@ -101,8 +101,8 @@ public:
 	void addAttributes(VertexAttribute attrib);
 
 	VertexAttribute getAttribute(GLuint index);
-	template <int size>
-	std::array<VertexAttribute, size> getAllAttributes();
+
+	std::vector<VertexAttribute> getAllAttributes();
 
 	void setAttributeSize(GLuint index, GLint size);
 

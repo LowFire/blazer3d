@@ -213,6 +213,13 @@ namespace TestOpenglWrapperAPI
 			}
 
 			glViewport(0, 0, 800, 640);
+
+			//Init some dummy data to make opengl happy.
+			GLuint buffer;
+			glCreateBuffers(1, &buffer);
+			glBindBuffer(GL_ARRAY_BUFFER, buffer);
+			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 		}
 
 		TEST_CLASS_CLEANUP(DestroyApplication)
@@ -245,13 +252,6 @@ namespace TestOpenglWrapperAPI
 		TEST_METHOD(testCopyConstructor)
 		{
 			VertexArray v_arr1;
-
-			//Init some dummy data to make opengl happy.
-			GLuint buffer;
-			glCreateBuffers(1, &buffer);
-			glBindBuffer(GL_ARRAY_BUFFER, buffer);
-			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 
 			v_arr1.createAttribute(0, 4, GL_FLOAT, false, 0, (void*)(0));
 			v_arr1.createAttribute(1, 3, GL_FLOAT, false, sizeof(float)*7, (void*)(sizeof(float)*4));
@@ -363,12 +363,6 @@ namespace TestOpenglWrapperAPI
 		
 		TEST_METHOD(testInitListConstructor)
 		{
-			//Init some dummy data to make opengl happy.
-			GLuint buffer;
-			glCreateBuffers(1, &buffer);
-			glBindBuffer(GL_ARRAY_BUFFER, buffer);
-			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 
 			VertexArray v_arr {
 				{ 0, 3, GL_FLOAT, false, 0, (void*)(0) },
@@ -524,7 +518,7 @@ namespace TestOpenglWrapperAPI
 			v_arr.disableAttribute(2);
 
 			v_arr.bind();
-			for each (auto v in v_arr.vertex_attributes)
+			for each (const auto& v in v_arr.vertex_attributes)
 			{
 				VertexArray::VertexAttribute attrib = v.second;
 				GLint state;
@@ -737,13 +731,6 @@ namespace TestOpenglWrapperAPI
 		TEST_METHOD(testCreateAndGetAttribute) //TODO: Test and implement the case where the attribute name or index is the same as an already existing attribute.
 		{
 			VertexArray v_arr;
-
-			//Init some dummy data to make opengl happy.
-			GLuint buffer;
-			glCreateBuffers(1, &buffer);
-			glBindBuffer(GL_ARRAY_BUFFER, buffer);
-			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 			
 			v_arr.createAttribute(0,
 				3, 
@@ -806,6 +793,20 @@ namespace TestOpenglWrapperAPI
 				Assert::IsFalse(enabled);
 			}
 			v_arr.unbind();
+
+			//Test if attribute is overwritten if an attribute is added with an index of an already existing attribute.
+			v_arr.createAttribute(1,
+				2,
+				GL_INT,
+				GL_TRUE,
+				sizeof(float) * 6,
+				(void*)(sizeof(float) * 6));
+
+			Assert::AreEqual(2, v_arr.vertex_attributes.at(1).size);
+			Assert::AreEqual((GLenum)GL_INT, v_arr.vertex_attributes.at(1).type);
+			Assert::AreEqual((GLboolean)GL_TRUE, v_arr.vertex_attributes.at(1).normalized);
+			Assert::AreEqual((GLint)(sizeof(float) * 6), v_arr.vertex_attributes.at(1).stride);
+			Assert::AreEqual((void*)(sizeof(float) * 6), v_arr.vertex_attributes.at(1).offset);
 		}
 
 		TEST_METHOD(testSetAttributeSize)
@@ -948,12 +949,6 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testSetAttributeOffset)
 		{
-			//Init some dummy data to make opengl happy.
-			GLuint buffer;
-			glCreateBuffers(1, &buffer);
-			glBindBuffer(GL_ARRAY_BUFFER, buffer);
-			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 
 			VertexArray v_arr;
 			v_arr.createAttribute(0,
@@ -1045,12 +1040,6 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testAddAttributes)
 		{
-			//Init some dummy data to make opengl happy.
-			GLuint buffer;
-			glCreateBuffers(1, &buffer);
-			glBindBuffer(GL_ARRAY_BUFFER, buffer);
-			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
 
 			VertexArray v_arr;
 			v_arr.addAttributes({
@@ -1153,6 +1142,42 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((void*)(sizeof(float) * 5), offset);
 			Assert::AreEqual(GL_FALSE, enabled);//They both should be false
 			Assert::IsFalse(enabled);
+		}
+
+		TEST_METHOD(testGetAllAttributes)
+		{
+			VertexArray v_arr;
+			v_arr.addAttributes({
+				{ 0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(0) },
+				{ 1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 7) },
+				{ 2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (void*)(sizeof(float) * 7) }
+			});
+
+			//Test retrieving an array of attributes
+			auto attrib_arr = v_arr.getAllAttributes();
+			Assert::AreEqual(3, (int)attrib_arr.size());
+
+			//Test attribute values
+			Assert::AreEqual((GLuint)0, attrib_arr[0].index);
+			Assert::AreEqual(3, attrib_arr[0].size);
+			Assert::AreEqual((GLenum)GL_FLOAT, attrib_arr[0].type);
+			Assert::AreEqual((GLboolean)GL_FALSE, attrib_arr[0].normalized);
+			Assert::AreEqual((GLint)(sizeof(float) * 6), attrib_arr[0].stride);
+			Assert::AreEqual((void*)(0), attrib_arr[0].offset);
+
+			Assert::AreEqual((GLuint)1, attrib_arr[1].index);
+			Assert::AreEqual(4, attrib_arr[1].size);
+			Assert::AreEqual((GLenum)GL_FLOAT, attrib_arr[1].type);
+			Assert::AreEqual((GLboolean)GL_FALSE, attrib_arr[1].normalized);
+			Assert::AreEqual((GLint)(sizeof(float) * 5), attrib_arr[1].stride);
+			Assert::AreEqual((void*)(sizeof(float) * 7), attrib_arr[1].offset);
+
+			Assert::AreEqual((GLuint)2, attrib_arr[2].index);
+			Assert::AreEqual(2, attrib_arr[2].size);
+			Assert::AreEqual((GLenum)GL_FLOAT, attrib_arr[2].type);
+			Assert::AreEqual((GLboolean)GL_FALSE, attrib_arr[2].normalized);
+			Assert::AreEqual((GLint)(sizeof(float) * 7), attrib_arr[2].stride);
+			Assert::AreEqual((void*)(sizeof(float) * 7), attrib_arr[2].offset);
 		}
 	};
 }
