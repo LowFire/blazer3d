@@ -1,30 +1,19 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 
-#include <memory>
+#include <iostream>
 #include <vector>
 #include <string>
 
-#include "bApplication.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "VertexArray.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace TestOpenglWrapperAPI
 { 
-	TEST_CLASS(TestbApplication)
-	{
-	public:
-
-		TEST_METHOD(TestInit)
-		{
-			bApplication testApplication;
-			testApplication.init();
-			Assert::IsNotNull(testApplication.windows.at("main")->getWindow());
-			testApplication.close();
-		}
-	};
-
 	TEST_CLASS(TestVertexArray)
 	{
 	public:

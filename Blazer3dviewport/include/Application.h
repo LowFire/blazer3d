@@ -9,14 +9,14 @@
 #include <GLFW/glfw3.h>
 
 namespace TestOpenglWrapperAPI {
-	class TestbApplication;
+	class TestApplication;
 }
 
-class bApplication {
-	friend class TestOpenglWrapperAPI::TestbApplication;
+class Application {
+	friend class TestOpenglWrapperAPI::TestApplication;
 private:
 
-	class bWindow {
+	class Window {
 	private:
 		GLFWwindow* window;
 		const char* name;
@@ -25,18 +25,18 @@ private:
 
 	public:
 		
-		bWindow() : width(800), height(640), name("Blazer 3D"){
+		Window() : width(800), height(640), name("Blazer 3D"){
 			window = glfwCreateWindow(width, height, name, NULL, NULL);
 		}
 
-		bWindow(const bWindow& copy) {
+		Window(const Window& copy) {
 			this->window = copy.window;
 			this->name = copy.name;
 			this->width = copy.width;
 			this->height = copy.height;
 		}
 
-		~bWindow() {
+		~Window() {
 			glfwDestroyWindow(window);
 		}
 
@@ -49,7 +49,7 @@ private:
 		void setCallback(const char* callback_name, T function);
 	}; 
 
-	std::map<std::string, std::unique_ptr<bWindow>> windows;
+	std::map<std::string, std::unique_ptr<Window>> windows;
 
 public:
 	void run();
