@@ -2,45 +2,45 @@
 #include "constants.h"
 
 //Static variables
-GLuint VertexArray::current_bound_vao = 0;
+GLuint VertexArray::m_current_bound_vao = 0;
 
 //Constructors
 VertexArray::VertexArray()
 {
-	glCreateVertexArrays(1, &opengl_name);
-	label = std::to_string(opengl_name);
+	glCreateVertexArrays(1, &m_opengl_name);
+	m_label = std::to_string(m_opengl_name);
 	glObjectLabel(GL_VERTEX_ARRAY,
-		opengl_name,
+		m_opengl_name,
 		B_NULL_TERMINATED,
-		label.c_str());
+		m_label.c_str());
 	bind();
 	unbind();
 }
 
-VertexArray::VertexArray(const std::string label)
+VertexArray::VertexArray(const std::string m_label)
 {
-	glCreateVertexArrays(1, &opengl_name);
-	this->label = label;
+	glCreateVertexArrays(1, &m_opengl_name);
+	this->m_label = m_label;
 	glObjectLabel(GL_VERTEX_ARRAY,
-		opengl_name,
+		m_opengl_name,
 		B_NULL_TERMINATED,
-		this->label.c_str());
+		this->m_label.c_str());
 	bind();
 	unbind();
 }
 
 VertexArray::VertexArray(const VertexArray& copy)
 {
-	glCreateVertexArrays(1, &opengl_name);
-	this->label = std::to_string(opengl_name);
-	this->vertex_attributes = copy.vertex_attributes;
+	glCreateVertexArrays(1, &m_opengl_name);
+	this->m_label = std::to_string(m_opengl_name);
+	this->m_vertex_attributes = copy.m_vertex_attributes;
 	glObjectLabel(GL_VERTEX_ARRAY,
-		opengl_name,
+		m_opengl_name,
 		B_NULL_TERMINATED,
-		this->label.c_str());
+		this->m_label.c_str());
 
 	bind();
-	for (const auto& entry : vertex_attributes)
+	for (const auto& entry : m_vertex_attributes)
 	{
 		auto a = entry.second;
 
@@ -52,18 +52,18 @@ VertexArray::VertexArray(const VertexArray& copy)
 
 VertexArray::VertexArray(std::initializer_list<VertexArray::VertexAttribute>l)
 {
-	glCreateVertexArrays(1, &opengl_name);
-	label = std::to_string(opengl_name);
+	glCreateVertexArrays(1, &m_opengl_name);
+	m_label = std::to_string(m_opengl_name);
 	glObjectLabel(GL_VERTEX_ARRAY,
-		opengl_name,
+		m_opengl_name,
 		B_NULL_TERMINATED,
-		this->label.c_str());
+		this->m_label.c_str());
 
 	bind();
 	for (const auto& a : l)
 	{
 		auto new_entry = std::make_pair(a.index, a);
-		vertex_attributes.insert(new_entry);
+		m_vertex_attributes.insert(new_entry);
 
 		//Set attributes
 		glVertexAttribPointer(a.index, a.size, a.type, a.normalized, a.stride, a.offset);
@@ -73,28 +73,28 @@ VertexArray::VertexArray(std::initializer_list<VertexArray::VertexAttribute>l)
 
 VertexArray::~VertexArray()
 {
-	glDeleteVertexArrays(1, &opengl_name);
+	glDeleteVertexArrays(1, &m_opengl_name);
 }
 
 //Public methods
 void VertexArray::bind()
 {
-	glBindVertexArray(opengl_name);
-	current_bound_vao = opengl_name;
+	glBindVertexArray(m_opengl_name);
+	m_current_bound_vao = m_opengl_name;
 }
 
 void VertexArray::unbind()
 {
-	if (current_bound_vao == opengl_name)
+	if (m_current_bound_vao == m_opengl_name)
 	{
 		glBindVertexArray(0);
-		current_bound_vao = 0;
+		m_current_bound_vao = 0;
 	}
 }
 
 bool VertexArray::isBound()
 {
-	if (opengl_name == current_bound_vao)
+	if (m_opengl_name == m_current_bound_vao)
 		return true;
 	return false;
 }
@@ -103,7 +103,7 @@ void VertexArray::enableAttribute(GLuint index)
 {
 	bind();
 	glEnableVertexAttribArray(index);
-	vertex_attributes.at(index).enabled = true;
+	m_vertex_attributes.at(index).enabled = true;
 	unbind();
 }
 
@@ -111,17 +111,17 @@ void VertexArray::disableAttribute(GLuint index)
 {
 	bind();
 	glDisableVertexAttribArray(index);
-	vertex_attributes.at(index).enabled = false;
+	m_vertex_attributes.at(index).enabled = false;
 	unbind();
 }
 
 void VertexArray::setLabel(const std::string& label)
 {
-	this->label = label;
+	this->m_label = label;
 	glObjectLabel(GL_VERTEX_ARRAY,
-		opengl_name,
+		m_opengl_name,
 		B_NULL_TERMINATED,
-		this->label.c_str());
+		this->m_label.c_str());
 }
 
 void VertexArray::createAttribute(GLuint index,
@@ -140,16 +140,16 @@ void VertexArray::addAttributes(std::initializer_list<VertexArray::VertexAttribu
 {
 	for (const auto& a : l)
 	{
-		if (!vertex_attributes.count(a.index))
+		if (!m_vertex_attributes.count(a.index))
 		{
 			auto new_entry = std::make_pair(a.index, a);
-			vertex_attributes.insert(new_entry);
+			m_vertex_attributes.insert(new_entry);
 		}
 		else
 		{
-			vertex_attributes.erase(a.index);
+			m_vertex_attributes.erase(a.index);
 			auto new_entry = std::make_pair(a.index, a);
-			vertex_attributes.insert(new_entry);
+			m_vertex_attributes.insert(new_entry);
 		}
 
 		//Update attribute pointer
@@ -166,16 +166,16 @@ void VertexArray::addAttributes(std::initializer_list<VertexArray::VertexAttribu
 
 void VertexArray::addAttributes(VertexArray::VertexAttribute attrib)
 {
-	if (!vertex_attributes.count(attrib.index))
+	if (!m_vertex_attributes.count(attrib.index))
 	{
 		auto new_entry = std::make_pair(attrib.index, attrib);
-		vertex_attributes.insert(new_entry);
+		m_vertex_attributes.insert(new_entry);
 	}
 	else
 	{
-		vertex_attributes.erase(attrib.index);
+		m_vertex_attributes.erase(attrib.index);
 		auto new_entry = std::make_pair(attrib.index, attrib);
-		vertex_attributes.insert(new_entry);
+		m_vertex_attributes.insert(new_entry);
 	}
 
 	//Update attribute pointer
@@ -191,14 +191,14 @@ void VertexArray::addAttributes(VertexArray::VertexAttribute attrib)
 
 VertexArray::VertexAttribute VertexArray::getAttribute(GLuint index)
 {
-		auto attrib = vertex_attributes.at(index);
+		auto attrib = m_vertex_attributes.at(index);
 		return attrib;
 }
 
 std::vector<VertexArray::VertexAttribute> VertexArray::getAllAttributes()
 {
 	std::vector<VertexAttribute> arr;
-	for (const auto& a : vertex_attributes)
+	for (const auto& a : m_vertex_attributes)
 	{
 		auto attrib = a.second;
 		arr.push_back(attrib);
@@ -209,64 +209,64 @@ std::vector<VertexArray::VertexAttribute> VertexArray::getAllAttributes()
 void VertexArray::setAttributeSize(GLuint index, GLint size)
 {
 	bind();
-	vertex_attributes.at(index).size = size;
-	glVertexAttribPointer(vertex_attributes.at(index).index,
-		vertex_attributes.at(index).size,
-		vertex_attributes.at(index).type,
-		vertex_attributes.at(index).normalized,
-		vertex_attributes.at(index).stride,
-		vertex_attributes.at(index).offset);
+	m_vertex_attributes.at(index).size = size;
+	glVertexAttribPointer(m_vertex_attributes.at(index).index,
+		m_vertex_attributes.at(index).size,
+		m_vertex_attributes.at(index).type,
+		m_vertex_attributes.at(index).normalized,
+		m_vertex_attributes.at(index).stride,
+		m_vertex_attributes.at(index).offset);
 	unbind();
 }
 
 void VertexArray::setAttributeNormalized(GLuint index, GLboolean normalized)
 {
 	bind();
-	vertex_attributes.at(index).normalized = normalized;
-	glVertexAttribPointer(vertex_attributes.at(index).index,
-		vertex_attributes.at(index).size,
-		vertex_attributes.at(index).type,
-		vertex_attributes.at(index).normalized,
-		vertex_attributes.at(index).stride,
-		vertex_attributes.at(index).offset);
+	m_vertex_attributes.at(index).normalized = normalized;
+	glVertexAttribPointer(m_vertex_attributes.at(index).index,
+		m_vertex_attributes.at(index).size,
+		m_vertex_attributes.at(index).type,
+		m_vertex_attributes.at(index).normalized,
+		m_vertex_attributes.at(index).stride,
+		m_vertex_attributes.at(index).offset);
 	unbind();
 }
 
 void VertexArray::setAttributeType(GLuint index, GLenum type)
 {
 	bind();
-	vertex_attributes.at(index).type = type;
-	glVertexAttribPointer(vertex_attributes.at(index).index,
-		vertex_attributes.at(index).size,
-		vertex_attributes.at(index).type,
-		vertex_attributes.at(index).normalized,
-		vertex_attributes.at(index).stride,
-		vertex_attributes.at(index).offset);
+	m_vertex_attributes.at(index).type = type;
+	glVertexAttribPointer(m_vertex_attributes.at(index).index,
+		m_vertex_attributes.at(index).size,
+		m_vertex_attributes.at(index).type,
+		m_vertex_attributes.at(index).normalized,
+		m_vertex_attributes.at(index).stride,
+		m_vertex_attributes.at(index).offset);
 	unbind();
 }
 
 void VertexArray::setAttributeOffset(GLuint index, void* offset)
 {
 	bind();
-	vertex_attributes.at(index).offset = offset;
-	glVertexAttribPointer(vertex_attributes.at(index).index,
-		vertex_attributes.at(index).size,
-		vertex_attributes.at(index).type,
-		vertex_attributes.at(index).normalized,
-		vertex_attributes.at(index).stride,
-		vertex_attributes.at(index).offset);
+	m_vertex_attributes.at(index).offset = offset;
+	glVertexAttribPointer(m_vertex_attributes.at(index).index,
+		m_vertex_attributes.at(index).size,
+		m_vertex_attributes.at(index).type,
+		m_vertex_attributes.at(index).normalized,
+		m_vertex_attributes.at(index).stride,
+		m_vertex_attributes.at(index).offset);
 	unbind();
 }
 
 void VertexArray::setAttributeStride(GLuint index, GLsizei stride)
 {
 	bind();
-	vertex_attributes.at(index).stride = stride;
-	glVertexAttribPointer(vertex_attributes.at(index).index,
-		vertex_attributes.at(index).size,
-		vertex_attributes.at(index).type,
-		vertex_attributes.at(index).normalized,
-		vertex_attributes.at(index).stride,
-		vertex_attributes.at(index).offset);
+	m_vertex_attributes.at(index).stride = stride;
+	glVertexAttribPointer(m_vertex_attributes.at(index).index,
+		m_vertex_attributes.at(index).size,
+		m_vertex_attributes.at(index).type,
+		m_vertex_attributes.at(index).normalized,
+		m_vertex_attributes.at(index).stride,
+		m_vertex_attributes.at(index).offset);
 	unbind();
 }
