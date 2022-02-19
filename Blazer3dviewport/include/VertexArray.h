@@ -24,10 +24,10 @@ public:
 	};
 
 private:
-	GLuint opengl_name;
-	std::string label;
-	std::unordered_map<GLuint, VertexAttribute> vertex_attributes;
-	static GLuint current_bound_vao;
+	GLuint m_opengl_name;
+	std::string m_label;
+	std::unordered_map<GLuint, VertexAttribute> m_vertex_attributes;
+	static GLuint m_current_bound_vao;
 
 public:
 	//Constructors
@@ -86,8 +86,8 @@ public:
 		}
 	}
 
-	GLuint getOpenglName() { return opengl_name; };
-	std::string getLabel() { return label; };
+	GLuint getOpenglName() { return m_opengl_name; };
+	std::string getLabel() { return m_label; };
 	void setLabel(const std::string& label);
 
 	void createAttribute(GLuint index,
