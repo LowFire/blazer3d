@@ -165,6 +165,7 @@
     <ClInclude Include="..\include\BufferObjects.h" />
     <ClInclude Include="..\include\constants.h" />
     <ClInclude Include="..\include\VertexArray.h" />
+    <ClInclude Include="OpenglObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\vendor\glfw\build\ALL_BUILD.vcxproj">
