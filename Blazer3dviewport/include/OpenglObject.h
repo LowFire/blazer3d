@@ -26,5 +26,5 @@ public:
 			this->m_label.c_str());
 	}
 
-	GLenum getObjectLabel() { return m_object_type; }
+	GLenum getObjectType() { return m_object_type; }
 };
