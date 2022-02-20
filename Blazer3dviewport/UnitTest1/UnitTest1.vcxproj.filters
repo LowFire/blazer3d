@@ -27,9 +27,6 @@
     <ClCompile Include="TestVertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestOpenglObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

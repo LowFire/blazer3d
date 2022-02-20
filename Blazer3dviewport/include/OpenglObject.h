@@ -6,7 +6,7 @@
 #include "constants.h"
 
 class OpenglObject {
-private:
+protected:
 	GLuint m_opengl_name;
 	std::string m_label;
 	GLenum m_object_type;
@@ -14,7 +14,6 @@ private:
 public:
 	virtual void bind() = 0;
 	virtual void unbind() = 0;
-	virtual void reset() = 0;
 
 	GLuint getOpenglName() { return m_opengl_name; }
 	std::string getLabel() { return m_label; }

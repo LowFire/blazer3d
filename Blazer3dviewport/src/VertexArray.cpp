@@ -7,37 +7,30 @@ GLuint VertexArray::m_current_bound_vao = 0;
 //Constructors
 VertexArray::VertexArray()
 {
+	m_object_type = GL_VERTEX_ARRAY;
 	glCreateVertexArrays(1, &m_opengl_name);
 	m_label = std::to_string(m_opengl_name);
-	glObjectLabel(GL_VERTEX_ARRAY,
-		m_opengl_name,
-		B_NULL_TERMINATED,
-		m_label.c_str());
+	setLabel(m_label);
 	bind();
 	unbind();
 }
 
 VertexArray::VertexArray(const std::string m_label)
 {
+	m_object_type = GL_VERTEX_ARRAY;
 	glCreateVertexArrays(1, &m_opengl_name);
-	this->m_label = m_label;
-	glObjectLabel(GL_VERTEX_ARRAY,
-		m_opengl_name,
-		B_NULL_TERMINATED,
-		this->m_label.c_str());
+	setLabel(m_label);
 	bind();
 	unbind();
 }
 
 VertexArray::VertexArray(const VertexArray& copy)
 {
+	m_object_type = GL_VERTEX_ARRAY;
 	glCreateVertexArrays(1, &m_opengl_name);
 	this->m_label = std::to_string(m_opengl_name);
 	this->m_vertex_attributes = copy.m_vertex_attributes;
-	glObjectLabel(GL_VERTEX_ARRAY,
-		m_opengl_name,
-		B_NULL_TERMINATED,
-		this->m_label.c_str());
+	setLabel(m_label);
 
 	bind();
 	for (const auto& entry : m_vertex_attributes)
@@ -52,12 +45,10 @@ VertexArray::VertexArray(const VertexArray& copy)
 
 VertexArray::VertexArray(std::initializer_list<VertexArray::VertexAttribute>l)
 {
+	m_object_type = GL_VERTEX_ARRAY;
 	glCreateVertexArrays(1, &m_opengl_name);
 	m_label = std::to_string(m_opengl_name);
-	glObjectLabel(GL_VERTEX_ARRAY,
-		m_opengl_name,
-		B_NULL_TERMINATED,
-		this->m_label.c_str());
+	setLabel(m_label);
 
 	bind();
 	for (const auto& a : l)
@@ -92,6 +83,12 @@ void VertexArray::unbind()
 	}
 }
 
+void VertexArray::reset()
+{
+	glBindVertexArray(0);
+	m_current_bound_vao = 0;
+}
+
 bool VertexArray::isBound()
 {
 	if (m_opengl_name == m_current_bound_vao)
@@ -113,15 +110,6 @@ void VertexArray::disableAttribute(GLuint index)
 	glDisableVertexAttribArray(index);
 	m_vertex_attributes.at(index).enabled = false;
 	unbind();
-}
-
-void VertexArray::setLabel(const std::string& label)
-{
-	this->m_label = label;
-	glObjectLabel(GL_VERTEX_ARRAY,
-		m_opengl_name,
-		B_NULL_TERMINATED,
-		this->m_label.c_str());
 }
 
 void VertexArray::createAttribute(GLuint index,

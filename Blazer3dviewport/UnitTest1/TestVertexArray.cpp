@@ -319,6 +319,13 @@ namespace TestOpenglWrapperAPI
 			glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &current);
 			Assert::AreEqual(0, current); //Unbiding a bound VAO should set the currently bound vao to 0
 			Assert::AreEqual((GLuint)0, VertexArray::m_current_bound_vao);
+
+			v_arr1.bind();
+			VertexArray::reset();
+			glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &current);
+			Assert::AreEqual(0, current); //Reset unbinds the current vao and sets the bound vao to 0.
+			Assert::AreEqual((GLuint)0, VertexArray::m_current_bound_vao);
+			Assert::IsFalse(v_arr1.isBound());
 		}
 
 		TEST_METHOD(testEnableAndDisableAttribute)

@@ -168,7 +168,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="testApplication.cpp" />
-    <ClCompile Include="TestOpenglObject.cpp" />
     <ClCompile Include="TestVertexArray.cpp" />
     <ClCompile Include="UnitTest1.cpp" />
   </ItemGroup>
