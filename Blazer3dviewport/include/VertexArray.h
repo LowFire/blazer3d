@@ -6,11 +6,13 @@
 
 #include <glad/glad.h>
 
+#include "OpenglObject.h"
+
 namespace TestOpenglWrapperAPI {
 	class TestVertexArray;
 }
 
-class VertexArray {
+class VertexArray : public OpenglObject {
 	friend TestOpenglWrapperAPI::TestVertexArray;
 public:
 	struct VertexAttribute {
@@ -24,8 +26,6 @@ public:
 	};
 
 private:
-	GLuint m_opengl_name;
-	std::string m_label;
 	std::unordered_map<GLuint, VertexAttribute> m_vertex_attributes;
 	static GLuint m_current_bound_vao;
 
@@ -38,8 +38,9 @@ public:
 	~VertexArray();
 
 	//Public methods
-	void bind();
-	void unbind();
+	virtual void bind() override;
+	virtual void unbind() override;
+	static void reset();
 	bool isBound();
 
 	void enableAttribute(GLuint index);
@@ -85,10 +86,6 @@ public:
 			glVertexAttrib4f(index, *it, *(it + 1), *(it + 2), *(it + 3));
 		}
 	}
-
-	GLuint getOpenglName() { return m_opengl_name; };
-	std::string getLabel() { return m_label; };
-	void setLabel(const std::string& label);
 
 	void createAttribute(GLuint index,
 		GLint size,
