@@ -162,7 +162,14 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testDestructor)
 		{
-
+			GLuint name;
+			{
+				Buffer buf;
+				name = buf.m_opengl_name;
+				glBindBuffer(GL_ARRAY_BUFFER, name);
+				Assert::IsTrue(glIsBuffer(name));
+			}
+			Assert::IsFalse(glIsBuffer(name));
 		}
 
 		TEST_METHOD(testWriteData)
