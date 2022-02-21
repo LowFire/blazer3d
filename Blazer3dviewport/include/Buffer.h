@@ -18,8 +18,8 @@ class Buffer : public OpenglObject
 public:
 	struct DataBlockAttribute
 	{
-		GLsizeiptr m_size;
-		GLintptr m_offset;
+		GLsizeiptr size;
+		GLintptr offset;
 		GLenum type;
 	};
 
@@ -27,6 +27,7 @@ private:
 	GLbyte* p_data;
 	GLint m_total_size;
 	GLenum m_target;
+	GLenum m_usage;
 	std::unordered_map<int, DataBlockAttribute> m_data_attrib;
 
 public:
