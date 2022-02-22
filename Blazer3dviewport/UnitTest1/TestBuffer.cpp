@@ -246,6 +246,7 @@ namespace TestOpenglWrapperAPI
 			buf1.unbind();
 			Assert::IsFalse(buf1.isBound());
 			Assert::AreNotEqual(Buffer::s_currently_bound_buf, buf1.m_opengl_name);
+			Assert::AreEqual((GLuint)0, Buffer::s_currently_bound_buf);
 
 			buf2.bind();
 			Assert::IsTrue(buf2.isBound());

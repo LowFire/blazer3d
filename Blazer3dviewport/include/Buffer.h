@@ -45,6 +45,6 @@ public:
 	template <typename T>
 	void writeData(int data_index, std::shared_ptr<T> data);
 	template <typename T>
-	std::unique_ptr<T> readData(int data_index);
+	std::shared_ptr<T> readData(int data_index);
 
 };

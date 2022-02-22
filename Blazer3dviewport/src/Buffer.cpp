@@ -30,17 +30,24 @@ Buffer::~Buffer()
 
 void Buffer::bind()
 {
-
+	glBindBuffer(m_target, m_opengl_name);
+	s_currently_bound_buf = m_opengl_name;
 }
 
 void Buffer::unbind()
 {
-
+	if (s_currently_bound_buf == m_opengl_name)
+	{
+		glBindBuffer(m_target, 0);
+		s_currently_bound_buf = 0;
+	}
 }
 
 bool Buffer::isBound()
 {
-
+	if (s_currently_bound_buf == m_opengl_name)
+		return true;
+	return false;
 }
 
 template <typename T>
@@ -50,7 +57,7 @@ void Buffer::writeData(int data_index, std::shared_ptr<T> data)
 }
 
 template <typename T>
-std::unique_ptr<T> Buffer::readData(int data_index)
+std::shared_ptr<T> Buffer::readData(int data_index)
 {
 
 }
