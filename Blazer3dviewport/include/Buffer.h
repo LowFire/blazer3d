@@ -30,6 +30,7 @@ private:
 	GLenum m_target;
 	GLenum m_usage;
 	std::unordered_map<int, DataBlockAttribute> m_data_attrib;
+	static GLuint s_currently_bound_buf;
 
 public:
 	Buffer();
@@ -42,7 +43,7 @@ public:
 	static void reset();
 
 	template <typename T>
-	void writeData(int data_index, T* data);
+	void writeData(int data_index, std::shared_ptr<T> data);
 	template <typename T>
 	std::unique_ptr<T> readData(int data_index);
 

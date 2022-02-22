@@ -210,13 +210,14 @@ namespace TestOpenglWrapperAPI
 			Buffer buf = {
 				{ 0, sizeof(float) * 6, 0, GL_FLOAT }
 			};
-			float data[] = {
+			float* data = new float[] {
 				0.0f, 0.5f,
 				0.5f, -0.5f,
 				-0.5f, -0.5f
 			};
+			auto ptr = std::make_shared<float>(data);
 
-			buf.writeData(0, data);
+			buf.writeData(0, ptr);
 			auto readBack = buf.readData(0);
 			//Make sure the buffer is not mapped after operation is done
 			GLint mapped;
@@ -239,23 +240,29 @@ namespace TestOpenglWrapperAPI
 			buf1.bind();
 			Assert::IsTrue(buf1.isBound());
 			Assert::IsFalse(buf2.isBound());
-			Assert::AreEqual(Buffer::currently_bound_buf, buf1.m_opengl_name);
-			Assert::AreNotEqual(Buffer::currently_bound_buf, buf2.m_opengl_name);
+			Assert::AreEqual(Buffer::s_currently_bound_buf, buf1.m_opengl_name);
+			Assert::AreNotEqual(Buffer::s_currently_bound_buf, buf2.m_opengl_name);
 
 			buf1.unbind();
 			Assert::IsFalse(buf1.isBound());
-			Assert::AreNotEqual(Buffer::currently_bound_buf, buf1.m_opengl_name);
+			Assert::AreNotEqual(Buffer::s_currently_bound_buf, buf1.m_opengl_name);
 
 			buf2.bind();
-			Assert::IsTure(buf2.isBound());
-			Assert::AreEqual(Buffer::currently_bound_buf, buf2.m_opengl_name);
-			buf1.unbind() //This shouldn't unbind anything
-			Assert::IsTure(buf2.isBound());
-			Assert::AreEqual(Buffer::currently_bound_buf, buf2.m_opengl_name);
+			Assert::IsTrue(buf2.isBound());
+			Assert::AreEqual(Buffer::s_currently_bound_buf, buf2.m_opengl_name);
+			buf1.unbind(); //This shouldn't unbind anything
+			Assert::IsFalse(buf1.isBound());
+			Assert::AreNotEqual(Buffer::s_currently_bound_buf, buf1.m_opengl_name);
 
 			buf2.unbind();
 			Assert::IsFalse(buf2.isBound());
-			Assert::AreNotEqual(Buffer::currently_bound_buf, buf2.m_opengl_name);
+			Assert::AreNotEqual(Buffer::s_currently_bound_buf, buf2.m_opengl_name);
+
+			buf1.bind();
+			Buffer::reset();
+			Assert::IsFalse(buf1.isBound());
+			Assert::AreNotEqual(Buffer::s_currently_bound_buf, buf1.m_opengl_name);
+
 		}
 
 		TEST_METHOD(testGetAndSetLabel)
