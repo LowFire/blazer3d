@@ -215,7 +215,7 @@ namespace TestOpenglWrapperAPI
 				0.5f, -0.5f,
 				-0.5f, -0.5f
 			};
-			auto ptr = std::make_shared<float>(data);
+			auto ptr = std::make_shared<GLbyte>(data);
 
 			buf.writeData(0, ptr);
 			auto readBack = buf.readData(0);

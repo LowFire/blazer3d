@@ -42,8 +42,8 @@ public:
 	bool isBound();
 	static void reset();
 
-	template <typename T>
-	void writeData(int data_index, std::shared_ptr<T> data);
+	//template <typename T>
+	void writeData(int data_index, std::shared_ptr<GLbyte> data);
 	template <typename T>
 	std::shared_ptr<T> readData(int data_index);
 

@@ -50,14 +50,36 @@ bool Buffer::isBound()
 	return false;
 }
 
-template <typename T>
-void Buffer::writeData(int data_index, std::shared_ptr<T> data)
+//template <typename T>
+void Buffer::writeData(int data_index, std::shared_ptr<GLbyte> data)
 {
+	const auto& block = m_data_attrib.at(data_index);
+	p_data = (GLbyte*)glMapNamedBufferRange(m_opengl_name,
+		block.offset,
+		block.size,
+		GL_WRITE_ONLY);
 
+	//Write data into the buffer
+	//int count = block.size / sizeof(T);
+	for (int i = 0; i < block.size; i++)
+	{
+		p_data[i] = data.get()[i];
+	}
+
+	glFlushMappedNamedBufferRange(m_opengl_name, block.offset, block.size);
+	glUnmapNamedBuffer(m_opengl_name);
+	p_data = nullptr;
 }
 
 template <typename T>
-std::shared_ptr<T> Buffer::readData(int data_index)
+std::shared_ptr<T> Buffer::readData(int data_index) //TODO: Return a pointer of the type of data stored in the block.
 {
+	const auto& block = m_data_attrib.at(data_index);
+	p_data = (GLbyte*)glMapNamedBufferRange(m_opengl_name,
+		block.offset,
+		block.size,
+		GL_READ_ONLY);
 
+	//Allocate memory to store data.
+	auto readData = std::make_shared<T>(new T[]);
 }
