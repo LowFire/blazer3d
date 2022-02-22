@@ -84,8 +84,8 @@ namespace TestOpenglWrapperAPI
 		TEST_METHOD(testDataBlockConstructor)
 		{
 			Buffer buf1 = {
-				{ sizeof(float)* 6, 0,  GL_FLOAT },
-				{ sizeof(float) * 9, sizeof(float) * 6, GL_FLOAT }
+				{ 0, sizeof(float)* 6, 0,  GL_FLOAT },
+				{ 1, sizeof(float) * 9, sizeof(float) * 6, GL_FLOAT }
 			};
 
 			Buffer::DataBlockAttribute pos = { sizeof(float) * 9, 0, GL_FLOAT };
@@ -174,17 +174,88 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testWriteData)
 		{
+			Buffer buf = {
+				{ 0, sizeof(float) * 6, 0, GL_FLOAT }
+			};
+			float data[] = {
+				0.0f, 0.5f,
+				0.5f, -0.5f,
+				-0.5f, -0.5f
+			};
 
+			buf.writeData(0, data);
+
+			//Make sure the buffer is not mapped after operation is done
+			GLint mapped;
+			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_MAPPED, &mapped);
+			Assert::IsFalse(mapped);
+			Assert::AreEqual((GLbyte*)nullptr, buf.p_data); //this pointer should always be null outside the objects methods.
+
+			//Test to see if the data was written
+			GLfloat* readBack = (GLfloat*)glMapBufferRange(GL_ARRAY_BUFFER,
+				0,
+				buf.m_total_size,
+				GL_READ_ONLY);
+
+			for (int i = 0; i < 6; i++)
+			{
+				Assert::AreEqual(data[i], readBack[i]);
+			}
+			glUnmapBuffer(GL_ARRAY_BUFFER);
+			readBack = nullptr;
 		}
 
 		TEST_METHOD(testReadData)
 		{
+			Buffer buf = {
+				{ 0, sizeof(float) * 6, 0, GL_FLOAT }
+			};
+			float data[] = {
+				0.0f, 0.5f,
+				0.5f, -0.5f,
+				-0.5f, -0.5f
+			};
 
+			buf.writeData(0, data);
+			auto readBack = buf.readData(0);
+			//Make sure the buffer is not mapped after operation is done
+			GLint mapped;
+			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_MAPPED, &mapped);
+			Assert::IsFalse(mapped);
+			Assert::AreEqual((GLbyte*)nullptr, buf.p_data); //this pointer should always be null outside the objects methods.
+
+			//Test to see if data was successfully read from the buffer.
+			for (int i = 0; i < 6; i++)
+			{
+				Assert::AreEqual(data[i], readBack[i]);
+			}
 		}
 
 		TEST_METHOD(testBindAndUnbind)
 		{
+			Buffer buf1;
+			Buffer buf2;
 
+			buf1.bind();
+			Assert::IsTrue(buf1.isBound());
+			Assert::IsFalse(buf2.isBound());
+			Assert::AreEqual(Buffer::currently_bound_buf, buf1.m_opengl_name);
+			Assert::AreNotEqual(Buffer::currently_bound_buf, buf2.m_opengl_name);
+
+			buf1.unbind();
+			Assert::IsFalse(buf1.isBound());
+			Assert::AreNotEqual(Buffer::currently_bound_buf, buf1.m_opengl_name);
+
+			buf2.bind();
+			Assert::IsTure(buf2.isBound());
+			Assert::AreEqual(Buffer::currently_bound_buf, buf2.m_opengl_name);
+			buf1.unbind() //This shouldn't unbind anything
+			Assert::IsTure(buf2.isBound());
+			Assert::AreEqual(Buffer::currently_bound_buf, buf2.m_opengl_name);
+
+			buf2.unbind();
+			Assert::IsFalse(buf2.isBound());
+			Assert::AreNotEqual(Buffer::currently_bound_buf, buf2.m_opengl_name);
 		}
 
 		TEST_METHOD(testGetAndSetLabel)
@@ -194,7 +265,8 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testGetOpenglName)
 		{
-
+			Buffer buf;
+			Assert::AreEqual(buf.m_opengl_name, buf.getOpenglName());
 		}
 
 		TEST_METHOD(testClearData)
@@ -203,11 +275,6 @@ namespace TestOpenglWrapperAPI
 		}
 
 		TEST_METHOD(testClearAll)
-		{
-
-		}
-
-		TEST_METHOD(testAddDataBlock)
 		{
 
 		}

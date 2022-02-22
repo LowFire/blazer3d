@@ -18,6 +18,7 @@ class Buffer : public OpenglObject
 public:
 	struct DataBlockAttribute
 	{
+		int index;
 		GLsizeiptr size;
 		GLintptr offset;
 		GLenum type;
@@ -37,8 +38,12 @@ public:
 
 	virtual void bind() override;
 	virtual void unbind() override;
+	bool isBound();
+	static void reset();
 
-	void writeData(int data_index, std::unique_ptr<GLbyte>);
-	std::unique_ptr<GLbyte> readData(int data_index);
+	template <typename T>
+	void writeData(int data_index, T* data);
+	template <typename T>
+	std::unique_ptr<T> readData(int data_index);
 
 };
