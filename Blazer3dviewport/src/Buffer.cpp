@@ -59,4 +59,5 @@ bool Buffer::isBound()
 void Buffer::reset()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	s_currently_bound_buf = 0;
 }
