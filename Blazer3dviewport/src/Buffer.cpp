@@ -1,15 +1,21 @@
 #include "Buffer.h"
 
-Buffer::Buffer() : p_data((GLbyte*)nullptr), m_total_size(0),
+GLuint Buffer::s_currently_bound_buf = 0;
+
+Buffer::Buffer() : /*p_data((GLbyte*)nullptr),*/ m_total_size(0),
 m_target(GL_ARRAY_BUFFER), m_usage(GL_MAP_READ_BIT|GL_MAP_WRITE_BIT)
 {
 	glCreateBuffers(1, &m_opengl_name);
+	m_object_type = GL_BUFFER;
+	setLabel(std::to_string(m_opengl_name));
 };
 
 Buffer::Buffer(std::initializer_list<DataBlockAttribute> l) :
-	p_data((GLbyte*)nullptr), m_target(GL_ARRAY_BUFFER), m_usage(GL_MAP_READ_BIT|GL_MAP_WRITE_BIT)
+	/*p_data((GLbyte*)nullptr),*/ m_target(GL_ARRAY_BUFFER), m_usage(GL_MAP_READ_BIT|GL_MAP_WRITE_BIT)
 {
 	glCreateBuffers(1, &m_opengl_name);
+	m_object_type = GL_BUFFER;
+	setLabel(std::to_string(m_opengl_name));
 
 	//Allocate memory for buffer object using data block attributes.
 	GLint mem_size = 0;
@@ -50,36 +56,7 @@ bool Buffer::isBound()
 	return false;
 }
 
-//template <typename T>
-void Buffer::writeData(int data_index, std::shared_ptr<GLbyte> data)
+void Buffer::reset()
 {
-	const auto& block = m_data_attrib.at(data_index);
-	p_data = (GLbyte*)glMapNamedBufferRange(m_opengl_name,
-		block.offset,
-		block.size,
-		GL_WRITE_ONLY);
-
-	//Write data into the buffer
-	//int count = block.size / sizeof(T);
-	for (int i = 0; i < block.size; i++)
-	{
-		p_data[i] = data.get()[i];
-	}
-
-	glFlushMappedNamedBufferRange(m_opengl_name, block.offset, block.size);
-	glUnmapNamedBuffer(m_opengl_name);
-	p_data = nullptr;
-}
-
-template <typename T>
-std::shared_ptr<T> Buffer::readData(int data_index) //TODO: Return a pointer of the type of data stored in the block.
-{
-	const auto& block = m_data_attrib.at(data_index);
-	p_data = (GLbyte*)glMapNamedBufferRange(m_opengl_name,
-		block.offset,
-		block.size,
-		GL_READ_ONLY);
-
-	//Allocate memory to store data.
-	auto readData = std::make_shared<T>(new T[]);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

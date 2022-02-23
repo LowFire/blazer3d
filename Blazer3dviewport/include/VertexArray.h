@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <glad/glad.h>
-
 #include "OpenglObject.h"
 
 namespace TestOpenglWrapperAPI {

@@ -6,9 +6,9 @@
 #include <string>
 #include <iostream>
 
-#include <GLFW/glfw3.h>
-
 #include "Buffer.h"
+
+#include <GLFW/glfw3.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -57,8 +57,8 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual(std::to_string(buf.m_opengl_name), buf.m_label);
 			Assert::AreEqual(0, buf.m_total_size);
 			Assert::AreEqual((GLenum)GL_ARRAY_BUFFER, buf.m_target); //The target is the array buffer by default
-			Assert::AreEqual((GLenum)GL_DYNAMIC_STORAGE_BIT, buf.m_usage);
-			Assert::AreEqual((GLbyte*)nullptr, buf.p_data);
+			Assert::AreEqual((GLenum)GL_MAP_READ_BIT|GL_MAP_WRITE_BIT, buf.m_usage);
+			/*Assert::AreEqual((GLbyte*)nullptr, buf.p_data);*/
 			Assert::AreEqual((size_t)0, buf.m_data_attrib.size());
 
 			//Test against the objects properties in the context.
@@ -68,7 +68,7 @@ namespace TestOpenglWrapperAPI
 
 			glBindBuffer(GL_ARRAY_BUFFER, buf.m_opengl_name);
 			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
+			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_STORAGE_FLAGS, &usage);
 			glGetObjectLabel(GL_BUFFER,
 				buf.m_opengl_name,
 				buf.m_label.size() + 1,
@@ -76,7 +76,7 @@ namespace TestOpenglWrapperAPI
 				label);
 
 			Assert::AreEqual((GLint64)buf.m_total_size, size);
-			Assert::AreEqual((GLint64)buf.m_usage, usage);
+			Assert::AreEqual((GLint64)0, usage); //No storage was allocated yet.
 			Assert::AreEqual(buf.m_label.c_str(), label);
 			delete[] label;
 		}
@@ -88,8 +88,8 @@ namespace TestOpenglWrapperAPI
 				{ 1, sizeof(float) * 9, sizeof(float) * 6, GL_FLOAT }
 			};
 
-			Buffer::DataBlockAttribute pos = { sizeof(float) * 9, 0, GL_FLOAT };
-			Buffer::DataBlockAttribute color = { sizeof(int) * 9, sizeof(float) * 9, GL_INT };
+			Buffer::DataBlockAttribute pos = { 0, sizeof(float) * 9, 0, GL_FLOAT };
+			Buffer::DataBlockAttribute color = { 1, sizeof(int) * 9, sizeof(float) * 9, GL_INT };
 
 			Buffer buf2 = { pos, color };
 
@@ -109,8 +109,8 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((GLenum)GL_ARRAY_BUFFER, buf1.m_target);
 			Assert::AreEqual((GLenum)GL_ARRAY_BUFFER, buf2.m_target);
 
-			Assert::AreEqual((GLbyte*)nullptr, buf1.p_data);
-			Assert::AreEqual((GLbyte*)nullptr, buf2.p_data);
+			//Assert::AreEqual((GLbyte*)nullptr, buf1.p_data);
+			//Assert::AreEqual((GLbyte*)nullptr, buf2.p_data);
 
 			Assert::AreEqual((size_t)2, buf1.m_data_attrib.size());
 			Assert::AreEqual((size_t)2, buf2.m_data_attrib.size());
@@ -122,7 +122,7 @@ namespace TestOpenglWrapperAPI
 
 			glBindBuffer(GL_ARRAY_BUFFER, buf1.m_opengl_name);
 			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
+			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_STORAGE_FLAGS, &usage);
 			glGetObjectLabel(GL_BUFFER,
 				buf1.m_opengl_name,
 				buf1.m_label.size() + 1,
@@ -131,14 +131,14 @@ namespace TestOpenglWrapperAPI
 
 			Assert::AreEqual((GLint64)buf1.m_total_size, size);
 			Assert::AreEqual((GLint64)buf1.m_usage, usage);
-			Assert::AreEqual(buf2.m_label.c_str(), label1);
+			Assert::AreEqual(buf1.m_label.c_str(), label1);
 			delete[] label1;
 
 			GLchar* label2 = new GLchar[buf2.m_label.size() + 1];
 
 			glBindBuffer(GL_ARRAY_BUFFER, buf2.m_opengl_name);
 			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
+			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_STORAGE_FLAGS, &usage);
 			glGetObjectLabel(GL_BUFFER,
 				buf2.m_opengl_name,
 				buf2.m_label.size() + 1,
@@ -177,25 +177,26 @@ namespace TestOpenglWrapperAPI
 			Buffer buf = {
 				{ 0, sizeof(float) * 6, 0, GL_FLOAT }
 			};
-			float data[] = {
+			float* data = new float[]{
 				0.0f, 0.5f,
 				0.5f, -0.5f,
 				-0.5f, -0.5f
 			};
-
-			buf.writeData(0, data);
+			auto ptr = std::shared_ptr<float>(data);
+			buf.writeData(0, ptr);
 
 			//Make sure the buffer is not mapped after operation is done
 			GLint mapped;
+			glBindBuffer(GL_ARRAY_BUFFER, buf.m_opengl_name);
 			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_MAPPED, &mapped);
 			Assert::IsFalse(mapped);
-			Assert::AreEqual((GLbyte*)nullptr, buf.p_data); //this pointer should always be null outside the objects methods.
+			/*Assert::AreEqual((GLbyte*)nullptr, buf.p_data);*/ //this pointer should always be null outside the objects methods.
 
 			//Test to see if the data was written
 			GLfloat* readBack = (GLfloat*)glMapBufferRange(GL_ARRAY_BUFFER,
 				0,
 				buf.m_total_size,
-				GL_READ_ONLY);
+				GL_MAP_READ_BIT);
 
 			for (int i = 0; i < 6; i++)
 			{
@@ -215,20 +216,21 @@ namespace TestOpenglWrapperAPI
 				0.5f, -0.5f,
 				-0.5f, -0.5f
 			};
-			auto ptr = std::make_shared<GLbyte>(data);
+			auto ptr = std::shared_ptr<float>(data);
 
 			buf.writeData(0, ptr);
-			auto readBack = buf.readData(0);
+			auto readBack = buf.readData<float>(0);
 			//Make sure the buffer is not mapped after operation is done
 			GLint mapped;
+			glBindBuffer(GL_ARRAY_BUFFER, buf.m_opengl_name);
 			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_MAPPED, &mapped);
 			Assert::IsFalse(mapped);
-			Assert::AreEqual((GLbyte*)nullptr, buf.p_data); //this pointer should always be null outside the objects methods.
+			/*Assert::AreEqual((GLbyte*)nullptr, buf.p_data);*/ //this pointer should always be null outside the objects methods.
 
 			//Test to see if data was successfully read from the buffer.
 			for (int i = 0; i < 6; i++)
 			{
-				Assert::AreEqual(data[i], readBack[i]);
+				Assert::AreEqual(data[i], (GLfloat)readBack.get()[i]);
 			}
 		}
 
