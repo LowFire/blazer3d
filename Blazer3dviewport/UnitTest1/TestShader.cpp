@@ -55,6 +55,9 @@ namespace TestOpenglWrapperAPI
 			std::array<Shader::ShaderInfo, 2> info = { vertex, fragment };
 			Shader shader(info);
 
+			//Test if the program id has been set
+			Assert::IsTrue(shader.m_program > 0);
+
 			//Test if the shader objects have been attached to the program
 			GLint numShaders;
 			GLuint shaders[2];
@@ -78,7 +81,22 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testUse)
 		{
+			Shader::ShaderInfo vertex{ GL_VERTEX_SHADER, "testVertex.vert" };
+			Shader::ShaderInfo fragment{ GL_FRAGMENT_SHADER, "testFragment.frag" };
 
+			std::array<Shader::ShaderInfo, 2> info = { vertex, fragment };
+			Shader shader1(info);
+			Shader shader2(info);
+
+			shader1.use();
+			Assert::IsTrue(shader1.isInUse());
+			Assert::IsFalse(shader2.isInUse());
+			Assert::AreEqual(Shader::s_current_program, shader1.m_program);
+
+			shader2.use();
+			Assert::IsTrue(shader2.isInUse());
+			Assert::IsFalse(shader2.isInUse());
+			Assert::AreEqual(Shader::s_current_program, shader2.m_program);
 		}
 	};
 }

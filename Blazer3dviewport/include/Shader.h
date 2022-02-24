@@ -20,7 +20,7 @@ public:
 	};
 
 private:
-	GLuint m_program;
+	GLuint m_program = 0;
 	ShaderInfo m_vertex;
 	ShaderInfo m_fragment;
 	static GLuint s_current_program;
@@ -30,4 +30,5 @@ public:
 	Shader(std::array<ShaderInfo, 2> shaders);
 
 	void use();
+	bool isInUse();
 };
