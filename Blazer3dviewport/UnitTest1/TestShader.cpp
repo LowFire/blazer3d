@@ -46,5 +46,39 @@ namespace TestOpenglWrapperAPI
 		{
 			glfwTerminate();
 		}
+
+		TEST_METHOD(testCompileAndLink)
+		{
+			Shader::ShaderInfo vertex{  GL_VERTEX_SHADER, "testVertex.vert" };
+			Shader::ShaderInfo fragment{  GL_FRAGMENT_SHADER, "testFragment.frag" };
+
+			std::array<Shader::ShaderInfo, 2> info = { vertex, fragment };
+			Shader shader(info);
+
+			//Test if the shader objects have been attached to the program
+			GLint numShaders;
+			GLuint shaders[2];
+			glGetAttachedShaders(shader.m_program, 2, &numShaders, shaders);
+			Assert::AreEqual(2, numShaders);
+
+			//Test the compile status of the shaders
+			GLint vertex_compile_status;
+			GLint fragment_compile_status;
+			glGetShaderiv(shaders[0], GL_COMPILE_STATUS, &vertex_compile_status);
+			glGetShaderiv(shaders[1], GL_COMPILE_STATUS, &fragment_compile_status);
+
+			Assert::AreEqual(GL_TRUE, vertex_compile_status);
+			Assert::AreEqual(GL_TRUE, fragment_compile_status);
+
+			//Test the program link status
+			GLint program_link_status;
+			glGetProgramiv(shader.m_program, GL_LINK_STATUS, &program_link_status);
+			Assert::AreEqual(GL_TRUE, program_link_status);
+		}
+
+		TEST_METHOD(testUse)
+		{
+
+		}
 	};
 }
