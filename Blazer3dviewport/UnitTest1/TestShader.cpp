@@ -56,7 +56,7 @@ namespace TestOpenglWrapperAPI
 			Shader shader(info);
 
 			//Test if the program id has been set
-			Assert::IsTrue(shader.m_program > 0);
+			Assert::IsTrue(shader.m_program != 0);
 
 			//Test if the shader objects have been attached to the program
 			GLint numShaders;
