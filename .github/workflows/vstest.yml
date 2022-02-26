@@ -20,7 +20,7 @@ jobs:
 
     - name: Generate VS Project
       id: generate_vsproject
-      run: cmake -S vendor\glfw -B vendor\glfw\build -G "Visual Studio 17 2022"
+      run: cmake -S vendor\glfw -B vendor\glfw\build -G "Visual Studio 17 2022" -T "v143"
 
     - name: Build
       id: build
