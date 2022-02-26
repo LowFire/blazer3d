@@ -25,10 +25,14 @@ private:
 	ShaderInfo m_fragment;
 	static GLuint s_current_program;
 
+	std::string f_readSource(const std::string& path);
+	GLuint f_compileShader(ShaderInfo shader);
+	GLuint f_linkProgram(std::array<GLuint, 2> shader_objs);
+
 public:
-	Shader() = delete; //The default constructor is not allowed
+	Shader() = delete;
 	Shader(std::array<ShaderInfo, 2> shaders);
 
-	void use();
+	inline void use() { glUseProgram(m_program); s_current_program = m_program; }
 	bool isInUse();
 };
