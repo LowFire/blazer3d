@@ -58,8 +58,8 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual(0, buf.m_total_size);
 			Assert::AreEqual((GLenum)GL_ARRAY_BUFFER, buf.m_target); //The target is the array buffer by default
 			Assert::AreEqual((GLenum)GL_MAP_READ_BIT|GL_MAP_WRITE_BIT, buf.m_usage);
-			/*Assert::AreEqual((GLbyte*)nullptr, buf.p_data);*/
 			Assert::AreEqual((size_t)0, buf.m_data_attrib.size());
+			Assert::IsFalse(buf.m_is_initialized);
 
 			//Test against the objects properties in the context.
 			GLint64 size;
@@ -109,11 +109,11 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((GLenum)GL_ARRAY_BUFFER, buf1.m_target);
 			Assert::AreEqual((GLenum)GL_ARRAY_BUFFER, buf2.m_target);
 
-			//Assert::AreEqual((GLbyte*)nullptr, buf1.p_data);
-			//Assert::AreEqual((GLbyte*)nullptr, buf2.p_data);
-
 			Assert::AreEqual((size_t)2, buf1.m_data_attrib.size());
 			Assert::AreEqual((size_t)2, buf2.m_data_attrib.size());
+
+			Assert::IsTrue(buf1.m_is_initialized);
+			Assert::IsTrue(buf2.m_is_initialized);
 
 			//Test against the objects properties in the context.
 			GLint64 size;
@@ -190,7 +190,6 @@ namespace TestOpenglWrapperAPI
 			glBindBuffer(GL_ARRAY_BUFFER, buf.m_opengl_name);
 			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_MAPPED, &mapped);
 			Assert::IsFalse(mapped);
-			/*Assert::AreEqual((GLbyte*)nullptr, buf.p_data);*/ //this pointer should always be null outside the objects methods.
 
 			//Test to see if the data was written
 			GLfloat* readBack = (GLfloat*)glMapBufferRange(GL_ARRAY_BUFFER,
@@ -204,7 +203,6 @@ namespace TestOpenglWrapperAPI
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
 			readBack = nullptr;
-			delete[] data;
 		}
 
 		TEST_METHOD(testReadData)
@@ -226,14 +224,12 @@ namespace TestOpenglWrapperAPI
 			glBindBuffer(GL_ARRAY_BUFFER, buf.m_opengl_name);
 			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_MAPPED, &mapped);
 			Assert::IsFalse(mapped);
-			/*Assert::AreEqual((GLbyte*)nullptr, buf.p_data);*/ //this pointer should always be null outside the objects methods.
 
 			//Test to see if data was successfully read from the buffer.
 			for (int i = 0; i < 6; i++)
 			{
 				Assert::AreEqual(data[i], (GLfloat)readBack.get()[i]);
 			}
-			delete[] data;
 		}
 
 		TEST_METHOD(testBindAndUnbind)

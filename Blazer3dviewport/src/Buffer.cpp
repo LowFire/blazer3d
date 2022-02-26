@@ -2,7 +2,7 @@
 
 GLuint Buffer::s_currently_bound_buf = 0;
 
-Buffer::Buffer() : /*p_data((GLbyte*)nullptr),*/ m_total_size(0),
+Buffer::Buffer() : m_total_size(0),
 m_target(GL_ARRAY_BUFFER), m_usage(GL_MAP_READ_BIT|GL_MAP_WRITE_BIT)
 {
 	glCreateBuffers(1, &m_opengl_name);
@@ -11,7 +11,7 @@ m_target(GL_ARRAY_BUFFER), m_usage(GL_MAP_READ_BIT|GL_MAP_WRITE_BIT)
 };
 
 Buffer::Buffer(std::initializer_list<DataBlockAttribute> l) :
-	/*p_data((GLbyte*)nullptr),*/ m_target(GL_ARRAY_BUFFER), m_usage(GL_MAP_READ_BIT|GL_MAP_WRITE_BIT)
+	m_target(GL_ARRAY_BUFFER), m_usage(GL_MAP_READ_BIT|GL_MAP_WRITE_BIT)
 {
 	glCreateBuffers(1, &m_opengl_name);
 	m_object_type = GL_BUFFER;

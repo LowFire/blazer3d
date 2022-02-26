@@ -23,7 +23,6 @@ public:
 	};
 
 private:
-	//GLbyte* p_data;
 	GLint m_total_size;
 	GLenum m_target;
 	GLenum m_usage;
