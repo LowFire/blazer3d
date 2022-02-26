@@ -204,6 +204,7 @@ namespace TestOpenglWrapperAPI
 			}
 			glUnmapBuffer(GL_ARRAY_BUFFER);
 			readBack = nullptr;
+			delete[] data;
 		}
 
 		TEST_METHOD(testReadData)
@@ -232,6 +233,7 @@ namespace TestOpenglWrapperAPI
 			{
 				Assert::AreEqual(data[i], (GLfloat)readBack.get()[i]);
 			}
+			delete[] data;
 		}
 
 		TEST_METHOD(testBindAndUnbind)
@@ -287,6 +289,25 @@ namespace TestOpenglWrapperAPI
 		TEST_METHOD(testClearAll)
 		{
 
+		}
+
+		TEST_METHOD(testInitData)
+		{
+			Buffer buf;
+
+			Buffer::DataBlockAttribute pos{ 0, sizeof(float) * 6, 0, GL_FLOAT };
+			Buffer::DataBlockAttribute color{ 1, sizeof(float) * 9, sizeof(float) * 6, GL_FLOAT};
+
+			buf.initData(std::vector<Buffer::DataBlockAttribute>{pos, color});
+
+			//Test if buffer was initialized properly
+			Assert::AreEqual((size_t)2, buf.m_data_attrib.size());
+
+			GLint64 size;
+			glBindBuffer(GL_ARRAY_BUFFER, buf.m_opengl_name);
+			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+
+			Assert::AreEqual((GLint64)buf.m_total_size, size);
 		}
 	};
 }

@@ -27,6 +27,7 @@ Buffer::Buffer(std::initializer_list<DataBlockAttribute> l) :
 	}
 	m_total_size = mem_size;
 	glNamedBufferStorage(m_opengl_name, m_total_size, nullptr, m_usage);
+	m_is_initialized = true;
 }
 
 Buffer::~Buffer()
@@ -60,4 +61,21 @@ void Buffer::reset()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	s_currently_bound_buf = 0;
+}
+
+void Buffer::initData(std::vector<DataBlockAttribute> data_blocks)
+{
+	if (!m_is_initialized)
+	{
+		GLint mem_size = 0;
+		for (const auto& b : data_blocks)
+		{
+			mem_size += b.size;
+			auto new_entry = std::make_pair(b.index, b);
+			m_data_attrib.insert(new_entry);
+		}
+		m_total_size = mem_size;
+		glNamedBufferStorage(m_opengl_name, m_total_size, nullptr, m_usage);
+		m_is_initialized = true;
+	}
 }

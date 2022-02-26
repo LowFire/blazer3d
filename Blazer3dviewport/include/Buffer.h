@@ -27,6 +27,7 @@ private:
 	GLint m_total_size;
 	GLenum m_target;
 	GLenum m_usage;
+	bool m_is_initialized = false;
 	std::unordered_map<int, DataBlockAttribute> m_data_attrib;
 	static GLuint s_currently_bound_buf;
 
@@ -39,6 +40,7 @@ public:
 	virtual void unbind() override;
 	bool isBound();
 	static void reset();
+	void initData(std::vector<DataBlockAttribute> data_blocks);
 
 	template <typename T>
 	void writeData(int data_index, std::shared_ptr<T> data)
