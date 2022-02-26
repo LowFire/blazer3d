@@ -20,12 +20,12 @@ jobs:
 
     - name: Generate VS Project
       id: generate_vsproject
-      run: cmake -S vendor\glfw -B vendor\glfw\build
+      run: cmake -S vendor\glfw -B vendor\glfw\build -G "Visual Studio 17 2022" -T "v142"
 
     - name: Build
       id: build
       working-directory: Blazer3dviewport
-      run: MSBuild .\Blazer3dviewport.sln
+      run: MSBuild .\Blazer3dviewport.sln /p:PlatformToolset=v142
      
     - name: Setup VSTest path
       uses: darenm/Setup-VSTest@v1
