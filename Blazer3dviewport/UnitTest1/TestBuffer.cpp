@@ -308,6 +308,12 @@ namespace TestOpenglWrapperAPI
 			glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
 
 			Assert::AreEqual((GLint64)buf.m_total_size, size);
+
+			//Make sure you can't init data more than once.
+			Buffer::DataBlockAttribute new_pos{ 3, sizeof(float) * 9, sizeof(float) * 15, GL_FLOAT };
+			buf.initData(std::vector<Buffer::DataBlockAttribute>{new_pos});
+
+			Assert::AreNotEqual((size_t)3, buf.m_data_attrib.size());
 		}
 	};
 }
