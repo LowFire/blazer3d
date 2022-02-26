@@ -298,6 +298,8 @@ namespace TestOpenglWrapperAPI
 			Buffer::DataBlockAttribute pos{ 0, sizeof(float) * 6, 0, GL_FLOAT };
 			Buffer::DataBlockAttribute color{ 1, sizeof(float) * 9, sizeof(float) * 6, GL_FLOAT};
 
+			Assert::IsFalse(buf.m_is_initialized);
+
 			buf.initData(std::vector<Buffer::DataBlockAttribute>{pos, color});
 
 			//Test if buffer was initialized properly
@@ -313,6 +315,7 @@ namespace TestOpenglWrapperAPI
 			Buffer::DataBlockAttribute new_pos{ 3, sizeof(float) * 9, sizeof(float) * 15, GL_FLOAT };
 			buf.initData(std::vector<Buffer::DataBlockAttribute>{new_pos});
 
+			Assert::IsTrue(buf.m_is_initialized);
 			Assert::AreNotEqual((size_t)3, buf.m_data_attrib.size());
 		}
 	};
