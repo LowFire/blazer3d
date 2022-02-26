@@ -5,10 +5,9 @@
 #include <vector>
 #include <string>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "VertexArray.h"
+
+#include <GLFW/glfw3.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

@@ -27,6 +27,9 @@
     <ClCompile Include="..\src\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\constants.h">
@@ -38,10 +41,10 @@
     <ClInclude Include="..\include\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\BufferObjects.h">
+    <ClInclude Include="..\include\OpenglObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\OpenglObject.h">
+    <ClInclude Include="..\include\Buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
