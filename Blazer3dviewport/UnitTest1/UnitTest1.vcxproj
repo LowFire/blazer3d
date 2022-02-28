@@ -169,6 +169,7 @@
     </ClCompile>
     <ClCompile Include="testApplication.cpp" />
     <ClCompile Include="TestBuffer.cpp" />
+    <ClCompile Include="TestDraw.cpp" />
     <ClCompile Include="TestShader.cpp" />
     <ClCompile Include="TestVertexArray.cpp" />
     <ClCompile Include="UnitTest1.cpp" />
