@@ -98,5 +98,27 @@ namespace TestOpenglWrapperAPI
 			Assert::IsFalse(shader1.isInUse());
 			Assert::AreEqual(Shader::s_current_program, shader2.m_program);
 		}
+
+		TEST_METHOD(testDestructor)
+		{
+			Shader::ShaderInfo vertex{ GL_VERTEX_SHADER, "D:/Desktop/schoolwork/CSE499/blazer3d/Blazer3dviewport/shaders/testVertex.vert" };
+			Shader::ShaderInfo fragment{ GL_FRAGMENT_SHADER, "D:/Desktop/schoolwork/CSE499/blazer3d/Blazer3dviewport/shaders/testFragment.frag" };
+			std::array<Shader::ShaderInfo, 2> info = { vertex, fragment };
+			GLuint program;
+			GLuint shader_objs[2];
+			{
+				Shader shader(info);
+				program = shader.m_program;
+				glGetAttachedShaders(program, 2, NULL, shader_objs);
+				Assert::IsTrue(glIsProgram(program));
+				Assert::IsTrue(glIsShader(shader_objs[0]));
+				Assert::IsTrue(glIsShader(shader_objs[1]));
+			}
+
+			//The program and all attached shaders should be deleted
+			Assert::IsFalse(glIsProgram(program));
+			Assert::IsFalse(glIsShader(shader_objs[0]));
+			Assert::IsFalse(glIsShader(shader_objs[1]));
+		}
 	};
 }
