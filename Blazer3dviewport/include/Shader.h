@@ -17,7 +17,10 @@ public:
 	{
 		GLenum type;
 		std::string filepath;
+		GLuint id = 0;
 	};
+
+	friend ShaderInfo;
 
 private:
 	GLuint m_program = 0;
@@ -32,6 +35,7 @@ private:
 public:
 	Shader() = delete;
 	Shader(std::array<ShaderInfo, 2> shaders);
+	~Shader();
 
 	inline void use() { glUseProgram(m_program); s_current_program = m_program; }
 	bool isInUse();

@@ -114,10 +114,17 @@ Shader::Shader(std::array<ShaderInfo, 2> shaders)
 		return;
 	};
 
-	GLuint vert_obj = f_compileShader(m_vertex);
-	GLuint frag_obj = f_compileShader(m_fragment);
-	std::array<GLuint, 2> shader_ids{ vert_obj, frag_obj };
+	m_vertex.id = f_compileShader(m_vertex);
+	m_fragment.id = f_compileShader(m_fragment);
+	std::array<GLuint, 2> shader_ids{ m_vertex.id, m_fragment.id };
 	m_program = f_linkProgram(shader_ids);
+}
+
+Shader::~Shader()
+{
+	glDeleteProgram(m_program);
+	glDeleteShader(m_vertex.id);
+	glDeleteShader(m_fragment.id);
 }
 
 bool Shader::isInUse()
