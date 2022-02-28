@@ -1,8 +1,31 @@
 #pragma once
+#include <glm\vec3.hpp>
 
-class Draw 
+#include "Buffer.h"
+#include "VertexArray.h"
+
+class Draw
 {
 private:
+	VertexArray m_arrays;
+	Buffer m_buffer;
+	GLint m_vert_count;
+	glm::vec3 m_origin;
 
 public:
-}
+	glm::vec3 position;
+	glm::vec3 rotation;
+	glm::vec3 scale;
+
+	Draw();
+	//Draw(const VertexArray& arrays, const Buffer& buffer);
+
+	void draw();
+	void setBuffer(const Buffer& buffer);
+	const Buffer& getBuffer();
+	void setVertexArray(const VertexArray& arrays);
+	const VertexArray& getVertexArray();
+	int getVertCount();
+	void setOrigin(glm::vec3 origin);
+	glm::vec3 getOrigin();
+};
