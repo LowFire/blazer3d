@@ -39,6 +39,9 @@
     <ClInclude Include="..\include\VertexArray.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Type.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
