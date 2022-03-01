@@ -1,4 +1,5 @@
 #include "Buffer.h"
+#include "Type.h"
 
 GLuint Buffer::s_currently_bound_buf = 0;
 
