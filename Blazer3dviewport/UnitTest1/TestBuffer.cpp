@@ -314,5 +314,26 @@ namespace TestOpenglWrapperAPI
 			Assert::IsTrue(buf.m_is_initialized);
 			Assert::AreNotEqual((size_t)3, buf.m_data_attrib.size());
 		}
+
+		TEST_METHOD(testDataBlockGettersAndSetters)
+		{
+			Buffer buf;
+			std::vector<Buffer::DataBlockAttribute> attrib {
+				{ 0, sizeof(GLfloat) * 9, sizeof(GLfloat) * 6, GL_FLOAT },
+			};
+
+			buf.initData(attrib);
+			//Test getters and setters
+			Assert::AreEqual(9, buf.getDataBlockCount(0));
+			Assert::AreEqual((GLsizeiptr)sizeof(GLfloat) * 9, buf.getDataBlockSize(0));
+			Assert::AreEqual((GLintptr)sizeof(GLfloat) * 6, buf.getDataBlockOffset(0));
+			Assert::AreEqual((GLenum)GL_FLOAT, buf.getDataBlockType(0));
+
+			//Should return -1 if block cannot be found
+			Assert::AreEqual(-1, buf.getDataBlockCount(1));
+			Assert::AreEqual((GLsizeiptr)-1, buf.getDataBlockSize(1));
+			Assert::AreEqual((GLintptr)-1, buf.getDataBlockOffset(1));
+			Assert::AreEqual((GLenum)-1, buf.getDataBlockType(1));
+		}
 	};
 }

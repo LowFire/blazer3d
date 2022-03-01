@@ -40,6 +40,10 @@ public:
 	bool isBound();
 	static void reset();
 	void initData(std::vector<DataBlockAttribute> data_blocks);
+	int getDataBlockCount(int index);
+	GLsizeiptr getDataBlockSize(int index);
+	GLenum getDataBlockType(int index);
+	GLintptr getDataBlockOffset(int index);
 
 	template <typename T>
 	void writeData(int data_index, std::shared_ptr<T> data)

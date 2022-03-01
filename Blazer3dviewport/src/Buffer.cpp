@@ -79,3 +79,47 @@ void Buffer::initData(std::vector<DataBlockAttribute> data_blocks)
 		m_is_initialized = true;
 	}
 }
+
+int Buffer::getDataBlockCount(int index)
+{
+	auto it = m_data_attrib.find(index);
+	if (it != m_data_attrib.end())
+	{
+		auto elem = it->second;
+		return static_cast<int>(elem.size / getSizeOf(elem.type));
+	}
+	return -1;
+}
+
+GLsizeiptr Buffer::getDataBlockSize(int index)
+{
+	auto it = m_data_attrib.find(index);
+	if (it != m_data_attrib.end())
+	{
+		auto elem = it->second;
+		return elem.size;
+	}
+	return -1;
+}
+
+GLenum Buffer::getDataBlockType(int index)
+{
+	auto it = m_data_attrib.find(index);
+	if (it != m_data_attrib.end())
+	{
+		auto elem = it->second;
+		return elem.type;
+	}
+	return -1;
+}
+
+GLintptr Buffer::getDataBlockOffset(int index)
+{
+	auto it = m_data_attrib.find(index);
+	if (it != m_data_attrib.end())
+	{
+		auto elem = it->second;
+		return elem.offset;
+	}
+	return -1;
+}
