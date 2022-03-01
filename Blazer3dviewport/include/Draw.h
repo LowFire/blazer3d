@@ -4,8 +4,14 @@
 #include "Buffer.h"
 #include "VertexArray.h"
 
+namespace TestOpenglWrapperAPI
+{
+	class TestDraw;
+}
+
 class Draw
 {
+	friend TestOpenglWrapperAPI::TestDraw;
 private:
 	VertexArray m_arrays;
 	Buffer m_buffer;
