@@ -95,22 +95,70 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testSetAndGetOrigin)
 		{
-
+			Draw triangle;
+			glm::vec3 new_origin = { 4.0f, 2.0f, 0.0f };
+			triangle.setOrigin(new_origin);
+			Assert::AreEqual(new_origin, triangle.getOrigin());
 		}
 
 		TEST_METHOD(testGetAndSetVertexArray)
 		{
+			Draw triangle;
+			VertexArray new_array = {
+				{ 0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 9, (void*)(sizeof(GLfloat) * 9)}
+			};
+			triangle.setVertexArray(new_array);
 
+			//Test if vertex array was set and if the get function returns it.
+			GLint size;
+			GLint type;
+			GLint normalized;
+			GLint stride;
+			void* offset;
+
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(0, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+
+			VertexArray get_array = triangle.getVertexArray();
+			Assert::AreEqual(get_array.getAttribute(0).size, size);
+			Assert::AreEqual((GLint)get_array.getAttribute(0).type, type);
+			Assert::AreEqual((GLint)get_array.getAttribute(0).normalized, normalized);
+			Assert::AreEqual(get_array.getAttribute(0).stride, stride);
+			Assert::AreEqual(get_array.getAttribute(0).offset, offset);
 		}
 
 		TEST_METHOD(testGetAndSetBuffer)
 		{
+			Draw triangle;
+			Buffer buf;
+			auto data = std::make_shared<GLfloat>(new GLfloat[]{
+				0.0f, 0.5f, 0.0f,
+				0.5f, -0.5f, 0.0f,
+				-0.5f, -0.5f, 0.0f
+				});
+			Buffer::DataBlockAttribute attrib = {
+				0, sizeof(GLfloat) * 9, 0, GL_FLOAT
+			};
+			buf.initData(std::vector<Buffer::DataBlockAttribute>{attrib});
+			buf.writeData(0, data);
 
+			triangle.setBuffer(buf);
+
+			auto actual_data = triangle.getBuffer().readData<GLfloat>(0);
+
+			//Test if buffer was set
+			for (int i = 0; i < 9; i++)
+			{
+				Assert::AreEqual(data.get()[i], actual_data.get()[i]);
+			}
 		}
 
 		TEST_METHOD(testGetVertCount)
 		{
-
+		
 		}
 	};
 };

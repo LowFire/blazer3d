@@ -28,9 +28,9 @@ public:
 
 	void draw();
 	void setBuffer(const Buffer& buffer);
-	const Buffer& getBuffer();
+	Buffer getBuffer();
 	void setVertexArray(const VertexArray& arrays);
-	const VertexArray& getVertexArray();
+	VertexArray getVertexArray();
 	int getVertCount();
 	void setOrigin(glm::vec3 origin);
 	glm::vec3 getOrigin();
