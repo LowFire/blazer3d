@@ -90,7 +90,8 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testDraw)
 		{
-
+			/*Draw triangle;
+			triangle.draw();*/
 		}
 
 		TEST_METHOD(testSetAndGetOrigin)
@@ -158,7 +159,8 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testGetVertCount)
 		{
-			
+			Draw triangle;
+			Assert::AreEqual(3, triangle.getVertCount());
 		}
 	};
 };
