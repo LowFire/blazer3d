@@ -13,7 +13,7 @@ Draw::Draw() : m_origin(glm::vec3(0)), m_vert_count(3), position(glm::vec3(0)),
 	m_buffer = Buffer{
 		{ 0, sizeof(GLfloat) * 6, 0, GL_FLOAT }
 	};
-	auto data = std::make_shared<GLfloat>(new GLfloat[]{
+	auto data = std::shared_ptr<GLfloat>(new GLfloat[]{
 		0.0f, 0.5f,
 		0.5f, -0.5f,
 		-0.5f, -0.5f

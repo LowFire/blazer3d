@@ -53,10 +53,21 @@ namespace TestOpenglWrapperAPI
 
 			//We want all the data to be set to draw a basic triangle (for now)
 			Assert::AreEqual(3, triangle.getVertCount());
-			Assert::AreEqual(glm::vec3(0), triangle.m_origin);
-			Assert::AreEqual(glm::vec3(0), triangle.position);
-			Assert::AreEqual(glm::vec3(0), triangle.rotation);
-			Assert::AreEqual(glm::vec3(1), triangle.scale);
+			Assert::AreEqual(0.0f, triangle.m_origin.x);
+			Assert::AreEqual(0.0f, triangle.m_origin.y);
+			Assert::AreEqual(0.0f, triangle.m_origin.z);
+
+			Assert::AreEqual(0.0f, triangle.position.x);
+			Assert::AreEqual(0.0f, triangle.position.y);
+			Assert::AreEqual(0.0f, triangle.position.z);
+
+			Assert::AreEqual(0.0f, triangle.rotation.x);
+			Assert::AreEqual(0.0f, triangle.rotation.y);
+			Assert::AreEqual(0.0f, triangle.rotation.z);
+
+			Assert::AreEqual(0.0f, triangle.scale.x);
+			Assert::AreEqual(0.0f, triangle.scale.y);
+			Assert::AreEqual(0.0f, triangle.scale.z);
 
 			//Test if data has been set in the buffer object.
 			Assert::AreEqual(1, triangle.m_buffer.getDataBlockCount(0));
@@ -99,7 +110,9 @@ namespace TestOpenglWrapperAPI
 			Draw triangle;
 			glm::vec3 new_origin = { 4.0f, 2.0f, 0.0f };
 			triangle.setOrigin(new_origin);
-			Assert::AreEqual(new_origin, triangle.getOrigin());
+			Assert::AreEqual(new_origin.x, triangle.getOrigin().x);
+			Assert::AreEqual(new_origin.y, triangle.getOrigin().y);
+			Assert::AreEqual(new_origin.z, triangle.getOrigin().z);
 		}
 
 		TEST_METHOD(testGetAndSetVertexArray)
@@ -135,7 +148,7 @@ namespace TestOpenglWrapperAPI
 		{
 			Draw triangle;
 			Buffer buf;
-			auto data = std::make_shared<GLfloat>(new GLfloat[]{
+			auto data = std::shared_ptr<GLfloat>(new GLfloat[]{
 				0.0f, 0.5f, 0.0f,
 				0.5f, -0.5f, 0.0f,
 				-0.5f, -0.5f, 0.0f
