@@ -33,6 +33,7 @@ private:
 public:
 	Buffer();
 	Buffer(std::initializer_list<DataBlockAttribute> l);
+	Buffer(Buffer& rhs);
 	~Buffer();
 
 	virtual void bind() override;
@@ -86,4 +87,5 @@ public:
 		return data;
 	}
 
+	/*Buffer& operator = (const Buffer& rhs);*/
 };
