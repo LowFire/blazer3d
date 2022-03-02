@@ -59,8 +59,8 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual(glm::vec3(1), triangle.scale);
 
 			//Test if data has been set in the buffer object.
-			Assert::AreEqual(1, triangle.m_buffer.getDataBlockCount());
-			Assert::AreEqual(sizeof(float) * 9, triangle.m_buffer.getDataBlockSize(0));
+			Assert::AreEqual(1, triangle.m_buffer.getDataBlockCount(0));
+			Assert::AreEqual((GLintptr)sizeof(float) * 9, triangle.m_buffer.getDataBlockSize(0));
 
 			std::vector<GLfloat> expected_data{
 				0.0f, 0.5f, 0.0f,
@@ -158,7 +158,7 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testGetVertCount)
 		{
-		
+			
 		}
 	};
 };
