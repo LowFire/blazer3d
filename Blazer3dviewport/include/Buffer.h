@@ -87,5 +87,5 @@ public:
 		return data;
 	}
 
-	/*Buffer& operator = (const Buffer& rhs);*/
+	Buffer& operator = (Buffer& rhs);
 };
