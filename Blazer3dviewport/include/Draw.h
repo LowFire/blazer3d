@@ -27,7 +27,7 @@ public:
 	//Draw(const VertexArray& arrays, const Buffer& buffer);
 
 	void draw();
-	void setBuffer(const Buffer& buffer);
+	void setBuffer(Buffer& buffer);
 	Buffer getBuffer();
 	void setVertexArray(const VertexArray& arrays);
 	VertexArray getVertexArray();

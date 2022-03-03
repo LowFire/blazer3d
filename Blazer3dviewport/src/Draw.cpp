@@ -3,22 +3,26 @@
 Draw::Draw() : m_origin(glm::vec3(0)), m_vert_count(3), position(glm::vec3(0)), 
 	rotation(glm::vec3(0)), scale(glm::vec3(1))
 {
-	//Setup vertex array
-	VertexArray::VertexAttribute pos{
-	 0, 2, GL_FLOAT, GL_FALSE, 0, 0
-	};
-	m_arrays = VertexArray { pos };
-
-	//Setup buffer
-	m_buffer = Buffer{
+	//Setup buffer first
+	m_buffer.initData(std::vector<Buffer::DataBlockAttribute> {
 		{ 0, sizeof(GLfloat) * 6, 0, GL_FLOAT }
-	};
+	});
+
 	auto data = std::shared_ptr<GLfloat>(new GLfloat[]{
 		0.0f, 0.5f,
 		0.5f, -0.5f,
 		-0.5f, -0.5f
-	});
+		});
 	m_buffer.writeData(0, data);
+	m_buffer.bind();
+
+	//Setup vertex array
+	VertexArray::VertexAttribute pos{
+	 0, 2, GL_FLOAT, GL_FALSE, 0, 0
+	};
+	m_arrays.addAttributes(pos);
+
+	m_arrays.enableAttribute(0);
 }
 
 void Draw::draw()
@@ -28,7 +32,7 @@ void Draw::draw()
 	glDrawArrays(GL_TRIANGLES, 0, m_vert_count);
 }
 
-void Draw::setBuffer(const Buffer& buffer)
+void Draw::setBuffer(Buffer& buffer)
 {
 	GLuint old = m_buffer.getOpenglName();
 	glDeleteBuffers(1, &old);
@@ -42,8 +46,6 @@ Buffer Draw::getBuffer()
 
 void Draw::setVertexArray(const VertexArray& arrays)
 {
-	GLuint old = m_arrays.getOpenglName();
-	glDeleteVertexArrays(1, &old);
 	m_arrays = arrays;
 }
 

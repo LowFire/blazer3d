@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "Draw.h"
+#include "VertexArray.h"
 
 #include <GLFW/glfw3.h>
 
@@ -65,18 +66,18 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual(0.0f, triangle.rotation.y);
 			Assert::AreEqual(0.0f, triangle.rotation.z);
 
-			Assert::AreEqual(0.0f, triangle.scale.x);
-			Assert::AreEqual(0.0f, triangle.scale.y);
-			Assert::AreEqual(0.0f, triangle.scale.z);
+			Assert::AreEqual(1.0f, triangle.scale.x);
+			Assert::AreEqual(1.0f, triangle.scale.y);
+			Assert::AreEqual(1.0f, triangle.scale.z);
 
 			//Test if data has been set in the buffer object.
-			Assert::AreEqual(1, triangle.m_buffer.getDataBlockCount(0));
-			Assert::AreEqual((GLintptr)sizeof(float) * 9, triangle.m_buffer.getDataBlockSize(0));
+			Assert::AreEqual(6, triangle.m_buffer.getDataBlockCount(0));
+			Assert::AreEqual((GLintptr)sizeof(float) * 6, triangle.m_buffer.getDataBlockSize(0));
 
 			std::vector<GLfloat> expected_data{
-				0.0f, 0.5f, 0.0f,
-				0.5f, -0.5f, 0.0f,
-				-0.5f, -0.5f, 0.0f
+				0.0f, 0.5f,
+				0.5f, -0.5f,
+				-0.5f, -0.5f
 			};
 
 			std::shared_ptr<GLfloat> actual_data = triangle.m_buffer.readData<GLfloat>(0);
@@ -92,7 +93,7 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((size_t)1, attribs.size());
 			Assert::AreEqual((GLuint)0, attribs.at(0).index);
 			Assert::AreEqual((GLenum)GL_FLOAT, attribs.at(0).type);
-			Assert::AreEqual(3, attribs.at(0).size);
+			Assert::AreEqual(2, attribs.at(0).size);
 			Assert::AreEqual((GLboolean)GL_FALSE, attribs.at(0).normalized);
 			Assert::AreEqual(0, attribs.at(0).stride);
 			Assert::AreEqual((void*)0, attribs.at(0).offset);
@@ -101,8 +102,10 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testDraw)
 		{
-			/*Draw triangle;
-			triangle.draw();*/
+			Draw triangle;
+			triangle.draw();
+			Assert::IsTrue(triangle.m_arrays.isBound());
+			Assert::IsTrue(triangle.m_buffer.isBound());
 		}
 
 		TEST_METHOD(testSetAndGetOrigin)
@@ -117,6 +120,13 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testGetAndSetVertexArray)
 		{
+			//Init some dummy data to make opengl happy.
+			GLuint buffer;
+			glCreateBuffers(1, &buffer);
+			glBindBuffer(GL_ARRAY_BUFFER, buffer);
+			float data[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+			glNamedBufferStorage(buffer, sizeof(data), data, GL_DYNAMIC_STORAGE_BIT);
+
 			Draw triangle;
 			VertexArray new_array = {
 				{ 0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 9, (void*)(sizeof(GLfloat) * 9)}
@@ -124,17 +134,18 @@ namespace TestOpenglWrapperAPI
 			triangle.setVertexArray(new_array);
 
 			//Test if vertex array was set and if the get function returns it.
+			triangle.m_arrays.bind();
 			GLint size;
 			GLint type;
 			GLint normalized;
 			GLint stride;
 			void* offset;
 
-			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
-			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-			glGetVertexAttribPointerv(0, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+			glGetVertexAttribiv(triangle.m_arrays.getAttribute(0).index, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(triangle.m_arrays.getAttribute(0).index, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(triangle.m_arrays.getAttribute(0).index, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(triangle.m_arrays.getAttribute(0).index, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(triangle.m_arrays.getAttribute(0).index, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
 
 			VertexArray get_array = triangle.getVertexArray();
 			Assert::AreEqual(get_array.getAttribute(0).size, size);
