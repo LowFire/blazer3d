@@ -19,6 +19,9 @@
     <ClCompile Include="..\..\vendor\glad\src\glad.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Draw.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Application.h">
@@ -37,6 +40,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\VertexArray.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Draw.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Type.h">

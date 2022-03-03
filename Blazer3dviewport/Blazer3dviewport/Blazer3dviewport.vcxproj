@@ -158,6 +158,7 @@
     <ClCompile Include="..\..\vendor\glad\src\glad.c" />
     <ClCompile Include="..\src\Application.cpp" />
     <ClCompile Include="..\src\Buffer.cpp" />
+    <ClCompile Include="..\src\Draw.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Shader.cpp" />
     <ClCompile Include="..\src\VertexArray.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="..\include\Application.h" />
     <ClInclude Include="..\include\Buffer.h" />
     <ClInclude Include="..\include\constants.h" />
+    <ClInclude Include="..\include\Draw.h" />
     <ClInclude Include="..\include\OpenglObject.h" />
     <ClInclude Include="..\include\Shader.h" />
     <ClInclude Include="..\include\Type.h" />
