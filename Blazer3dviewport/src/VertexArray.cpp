@@ -258,3 +258,23 @@ void VertexArray::setAttributeStride(GLuint index, GLsizei stride)
 		m_vertex_attributes.at(index).offset);
 	unbind();
 }
+
+VertexArray& VertexArray::operator= (const VertexArray& rhs)
+{
+	m_vertex_attributes = rhs.m_vertex_attributes;
+
+	bind();
+	//Set vertex attributes in vao
+	for (const auto& a : m_vertex_attributes)
+	{
+		auto attrib = a.second;
+		glVertexAttribPointer(attrib.index,
+			attrib.size,
+			attrib.type,
+			attrib.normalized,
+			attrib.stride,
+			attrib.offset);
+	}
+
+	return *this;
+}
