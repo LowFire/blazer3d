@@ -160,6 +160,29 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((GLint64)buf2.m_total_size, buf2_size);
 		}
 
+		TEST_METHOD(testCopyConstructor)
+		{
+			Buffer buf1({
+				{ 0, sizeof(GLfloat) * 9, 0, GL_FLOAT }
+			});
+			auto data = std::shared_ptr<GLfloat>(new GLfloat[]{
+				4.0f, 2.0f, 1.0f,
+				4.0f, 5.0f, 4.0f,
+				6.0f, 2.0f, 9.0f
+			});
+			buf1.writeData(0, data);
+
+			Buffer buf2(buf1);
+
+			//Test if data has been copied over.
+			auto buf1_data = buf1.readData<GLfloat>(0);
+			auto buf2_data = buf2.readData<GLfloat>(0);
+			for (int i = 0; i < 9; i++)
+			{
+				Assert::AreEqual(buf1_data.get()[i], buf2_data.get()[i]);
+			}
+		}
+
 		TEST_METHOD(testDestructor)
 		{
 			GLuint name;
@@ -334,6 +357,56 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((GLsizeiptr)-1, buf.getDataBlockSize(1));
 			Assert::AreEqual((GLintptr)-1, buf.getDataBlockOffset(1));
 			Assert::AreEqual((GLenum)-1, buf.getDataBlockType(1));
+		}
+
+		TEST_METHOD(testAssignemntOverload)
+		{
+			Buffer buf1({
+				{ 0, sizeof(GLfloat) * 9, 0, GL_FLOAT }
+				});
+			auto buf1_pos = std::shared_ptr<GLfloat>(new GLfloat[]{
+				4.0f, 2.0f, 1.0f,
+				4.0f, 5.0f, 4.0f,
+				6.0f, 2.0f, 9.0f
+				});
+			buf1.writeData(0, buf1_pos);
+
+			Buffer buf2({
+				{ 0, sizeof(GLfloat) * 9, 0, GL_FLOAT },
+				{ 1, sizeof(GLuint) * 9, sizeof(GLfloat) * 9, GL_UNSIGNED_INT }
+			});
+			auto buf2_pos = std::shared_ptr<GLfloat>(new GLfloat[]{
+				5.5f, 2.4f, 9.0f,
+				6.5f, 1.4f, 6.6f,
+				7.4f, 23.1f, 8.2f
+			});
+			auto buf2_color = std::shared_ptr<GLuint>(new GLuint[]{
+				234, 123, 45,
+				223, 145, 210,
+				45, 22, 122
+			});
+			buf2.writeData(0, buf2_pos);
+			buf2.writeData(1, buf2_color);
+
+			buf1 = buf2;
+
+			//Test if data has been copied and replaced.
+			auto buf1_posdata = buf1.readData<GLfloat>(0);
+			auto buf1_colordata = buf1.readData<GLuint>(1);
+			auto buf2_posdata = buf2.readData<GLfloat>(0);
+			auto buf2_colordata = buf2.readData<GLuint>(1);
+
+			//Compare position data
+			for (int i = 0; i < 9; i++)
+			{
+				Assert::AreEqual(buf1_posdata.get()[i], buf2_posdata.get()[i]);
+			}
+
+			//Compare color data
+			for (int i = 0; i < 9; i++)
+			{
+				Assert::AreEqual(buf1_colordata.get()[i], buf2_colordata.get()[i]);
+			}
 		}
 	};
 }

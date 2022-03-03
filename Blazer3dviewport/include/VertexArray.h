@@ -108,4 +108,6 @@ public:
 	void setAttributeOffset(GLuint index, void* offset);
 
 	void setAttributeStride(GLuint index, GLsizei stride);
+
+	VertexArray& operator= (const VertexArray& rhs);
 };
