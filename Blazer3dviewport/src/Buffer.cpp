@@ -1,4 +1,5 @@
 #include "Buffer.h"
+#include "Type.h"
 
 GLuint Buffer::s_currently_bound_buf = 0;
 
@@ -27,6 +28,35 @@ Buffer::Buffer(std::initializer_list<DataBlockAttribute> l) :
 	}
 	m_total_size = mem_size;
 	glNamedBufferStorage(m_opengl_name, m_total_size, nullptr, m_usage);
+	m_is_initialized = true;
+}
+
+Buffer::Buffer(Buffer& rhs) :
+	m_target(GL_ARRAY_BUFFER), m_usage(GL_MAP_READ_BIT | GL_MAP_WRITE_BIT)
+{
+	glCreateBuffers(1, &m_opengl_name);
+	m_object_type = GL_BUFFER;
+	setLabel(std::to_string(m_opengl_name));
+
+	//Copy over data blocks
+	m_data_attrib = rhs.m_data_attrib;
+	
+	//Get the total size
+	GLint mem_size = 0;
+	for (const auto& b : m_data_attrib)
+	{
+		mem_size += b.second.size;
+	}
+	m_total_size = mem_size;
+	glNamedBufferStorage(m_opengl_name, m_total_size, nullptr, m_usage);
+
+	//Copy data over
+	for (const auto& b : m_data_attrib)
+	{
+		auto data = rhs.readData<GLbyte>(b.first);
+		writeData(b.first, data);
+	}
+
 	m_is_initialized = true;
 }
 
@@ -78,4 +108,79 @@ void Buffer::initData(std::vector<DataBlockAttribute> data_blocks)
 		glNamedBufferStorage(m_opengl_name, m_total_size, nullptr, m_usage);
 		m_is_initialized = true;
 	}
+}
+
+int Buffer::getDataBlockCount(int index)
+{
+	auto it = m_data_attrib.find(index);
+	if (it != m_data_attrib.end())
+	{
+		auto elem = it->second;
+		return static_cast<int>(elem.size / getSizeOf(elem.type));
+	}
+	return -1;
+}
+
+GLsizeiptr Buffer::getDataBlockSize(int index)
+{
+	auto it = m_data_attrib.find(index);
+	if (it != m_data_attrib.end())
+	{
+		auto elem = it->second;
+		return elem.size;
+	}
+	return -1;
+}
+
+GLenum Buffer::getDataBlockType(int index)
+{
+	auto it = m_data_attrib.find(index);
+	if (it != m_data_attrib.end())
+	{
+		auto elem = it->second;
+		return elem.type;
+	}
+	return -1;
+}
+
+GLintptr Buffer::getDataBlockOffset(int index)
+{
+	auto it = m_data_attrib.find(index);
+	if (it != m_data_attrib.end())
+	{
+		auto elem = it->second;
+		return elem.offset;
+	}
+	return -1;
+}
+
+Buffer& Buffer::operator = (Buffer& rhs)
+{
+	//Delete and allocate a new buffer
+	glDeleteBuffers(1, &m_opengl_name);
+	glCreateBuffers(1, &m_opengl_name);
+	setLabel(std::to_string(m_opengl_name));
+
+	//Copy over data blocks
+	m_data_attrib = rhs.m_data_attrib;
+
+	//Get the total size
+	GLint mem_size = 0;
+	for (const auto& b : m_data_attrib)
+	{
+		mem_size += b.second.size;
+	}
+	m_total_size = mem_size;
+	glNamedBufferStorage(m_opengl_name, m_total_size, nullptr, m_usage);
+
+	//Copy data over
+	for (const auto& b : m_data_attrib)
+	{
+		auto data = rhs.readData<GLbyte>(b.first);
+		writeData(b.first, data);
+	}
+
+	m_is_initialized = true;
+
+	return *this;
 }

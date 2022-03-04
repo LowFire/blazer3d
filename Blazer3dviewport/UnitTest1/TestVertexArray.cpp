@@ -1014,5 +1014,62 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((GLint)(sizeof(float) * 7), attrib_arr[2].stride);
 			Assert::AreEqual((void*)(sizeof(float) * 7), attrib_arr[2].offset);
 		}
+
+		TEST_METHOD(testAssigmentOverload)
+		{
+			VertexArray arr1;
+			VertexArray arr2;
+
+			arr1.addAttributes({
+				{ 0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (void*)0 },
+				{ 1, 3, GL_UNSIGNED_INT, GL_TRUE, sizeof(GLfloat) * 6, (void*)(sizeof(GLfloat) * 9) }
+			});
+
+			arr2.addAttributes({
+				{ 0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)0 },
+				{ 1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)(sizeof(GLfloat) * 2) }
+			});
+
+			arr1 = arr2;
+
+			//Test if attributes were replaced in the first array.
+			for (int i = 0; i < 2; i++)
+			{
+				Assert::AreEqual(arr1.m_vertex_attributes.at(i).size, arr2.m_vertex_attributes.at(i).size);
+				Assert::AreEqual(arr1.m_vertex_attributes.at(i).type, arr2.m_vertex_attributes.at(i).type);
+				Assert::AreEqual(arr1.m_vertex_attributes.at(i).normalized, arr2.m_vertex_attributes.at(i).normalized);
+				Assert::AreEqual(arr1.m_vertex_attributes.at(i).stride, arr2.m_vertex_attributes.at(i).stride);
+				Assert::AreEqual(arr1.m_vertex_attributes.at(i).offset, arr2.m_vertex_attributes.at(i).offset);
+			}
+
+			//Attributes also need to be set in the vao
+			arr1.bind();
+			for (const auto& a : arr1.m_vertex_attributes)
+			{
+				auto attrib = a.second;
+				GLint size;
+				GLint type;
+				GLint normalized;
+				GLint stride;
+				void* offset;
+				GLint enabled;
+
+				glGetVertexAttribiv(attrib.index, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+				glGetVertexAttribiv(attrib.index, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+				glGetVertexAttribiv(attrib.index, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+				glGetVertexAttribiv(attrib.index, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+				glGetVertexAttribPointerv(attrib.index, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+				glGetVertexAttribiv(attrib.index, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+
+				Assert::AreEqual(attrib.size, size);
+				Assert::AreEqual((GLint)attrib.type, type);
+				Assert::AreEqual((GLint)attrib.normalized, normalized);
+				Assert::AreEqual((GLint)attrib.stride, stride);
+				Assert::AreEqual(attrib.offset, offset);
+				Assert::AreEqual((GLint)attrib.enabled, enabled);//They both should be false
+				Assert::IsFalse(attrib.enabled);
+				Assert::IsFalse(enabled);
+			}
+		}
 	};
 }
