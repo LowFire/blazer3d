@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <memory>
 
@@ -48,11 +48,21 @@ private:
 		template <typename T>
 		void setCallback(const char* callback_name, T function);
 	}; 
+	
+	static Application* p_instance;
+	std::unordered_map<std::string, std::unique_ptr<Window>> windows;
 
-	std::map<std::string, std::unique_ptr<Window>> windows;
+
+	Application() {};
 
 public:
+	static Application* getInstance() { 
+		if (p_instance == nullptr)
+			p_instance = new Application;
+		return p_instance;
+	};
+
 	void run();
 	bool init();
-	void close() { glfwTerminate(); }
+	inline void close() { glfwTerminate(); }
 };

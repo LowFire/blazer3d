@@ -1,6 +1,8 @@
 
 #include "Application.h"
 
+Application* Application::p_instance = nullptr;
+
 void Application::run() {
 	while (!glfwWindowShouldClose(windows.at("main")->getWindow())) {
 		glfwPollEvents();
@@ -44,7 +46,7 @@ bool Application::init() {
 	return true;
 }
 
-//bWindow function implementations
+//Window function implementations
 void Application::Window::setWindowSize(int width, int height) {
 	this->width = width;
 	this->height = height;
