@@ -49,8 +49,8 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testCompileAndLink)
 		{
-			Shader::ShaderInfo vertex{  GL_VERTEX_SHADER, "D:/Desktop/schoolwork/CSE499/blazer3d/Blazer3dviewport/shaders/testVertex.vert" };
-			Shader::ShaderInfo fragment{  GL_FRAGMENT_SHADER, "D:/Desktop/schoolwork/CSE499/blazer3d/Blazer3dviewport/shaders/testFragment.frag" };
+			Shader::ShaderInfo vertex{  GL_VERTEX_SHADER, "../../shaders/testVertex.vert" };
+			Shader::ShaderInfo fragment{  GL_FRAGMENT_SHADER, "../../shaders/testFragment.frag" };
 
 			std::array<Shader::ShaderInfo, 2> info = { vertex, fragment };
 			Shader shader(info);
@@ -81,8 +81,8 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testUse)
 		{
-			Shader::ShaderInfo vertex{ GL_VERTEX_SHADER, "D:/Desktop/schoolwork/CSE499/blazer3d/Blazer3dviewport/shaders/testVertex.vert" };
-			Shader::ShaderInfo fragment{ GL_FRAGMENT_SHADER, "D:/Desktop/schoolwork/CSE499/blazer3d/Blazer3dviewport/shaders/testFragment.frag" };
+			Shader::ShaderInfo vertex{ GL_VERTEX_SHADER, "../../shaders/testVertex.vert" };
+			Shader::ShaderInfo fragment{ GL_FRAGMENT_SHADER, "../../shaders/testFragment.frag" };
 
 			std::array<Shader::ShaderInfo, 2> info = { vertex, fragment };
 			Shader shader1(info);
@@ -101,8 +101,8 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(testDestructor)
 		{
-			Shader::ShaderInfo vertex{ GL_VERTEX_SHADER, "D:/Desktop/schoolwork/CSE499/blazer3d/Blazer3dviewport/shaders/testVertex.vert" };
-			Shader::ShaderInfo fragment{ GL_FRAGMENT_SHADER, "D:/Desktop/schoolwork/CSE499/blazer3d/Blazer3dviewport/shaders/testFragment.frag" };
+			Shader::ShaderInfo vertex{ GL_VERTEX_SHADER, "../../shaders/testVertex.vert" };
+			Shader::ShaderInfo fragment{ GL_FRAGMENT_SHADER, "../../shaders/testFragment.frag" };
 			std::array<Shader::ShaderInfo, 2> info = { vertex, fragment };
 			GLuint program;
 			GLuint shader_objs[2];
