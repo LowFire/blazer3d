@@ -8,6 +8,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Render.h"
+
 namespace TestOpenglWrapperAPI {
 	class TestApplication;
 }
@@ -50,10 +52,12 @@ private:
 	}; 
 	
 	static Application* p_instance;
-	std::unordered_map<std::string, std::unique_ptr<Window>> windows;
+	std::unordered_map<std::string, std::unique_ptr<Window>> m_windows;
+	Render* m_renderer;
 
-
-	Application() {};
+	Application() {
+		m_renderer = Render::getInstance();
+	};
 
 public:
 	static Application* getInstance() { 

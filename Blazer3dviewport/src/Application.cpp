@@ -4,9 +4,8 @@
 Application* Application::p_instance = nullptr;
 
 void Application::run() {
-	while (!glfwWindowShouldClose(windows.at("main")->getWindow())) {
+	while (!glfwWindowShouldClose(m_windows.at("main")->getWindow())) {
 		glfwPollEvents();
-		glfwSwapBuffers(windows.at("main")->getWindow());
 	}
 }
 
@@ -19,17 +18,17 @@ bool Application::init() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
 	//Create windows
-	windows.insert(std::pair<std::string, std::unique_ptr<Window>>(
+	m_windows.insert(std::pair<std::string, std::unique_ptr<Window>>(
 		"main",
 		new Window()
 		));
 
-	if (windows.at("main")->getWindow() == nullptr) {
+	if (m_windows.at("main")->getWindow() == nullptr) {
 		std::cout << "Failed to create window" << std::endl;
 		return false;
 	}
 	
-	glfwMakeContextCurrent(windows.at("main")->getWindow());
+	glfwMakeContextCurrent(m_windows.at("main")->getWindow());
 
 
 	//Get opengl functions
@@ -39,8 +38,8 @@ bool Application::init() {
 		return false;
 	}
 
-	int window_width = windows.at("main")->getWindowWidth();
-	int window_height = windows.at("main")->getWindowHeight();
+	int window_width = m_windows.at("main")->getWindowWidth();
+	int window_height = m_windows.at("main")->getWindowHeight();
 	glViewport(0, 0, window_width, window_height);
 
 	return true;
