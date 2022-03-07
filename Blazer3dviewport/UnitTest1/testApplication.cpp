@@ -17,10 +17,10 @@ namespace TestOpenglWrapperAPI
 
 		TEST_METHOD(TestInit)
 		{
-			Application testApplication;
-			testApplication.init();
-			Assert::IsNotNull(testApplication.windows.at("main")->getWindow());
-			testApplication.close();
+			auto testApplication = Application::getInstance();
+			testApplication->init();
+			Assert::IsNotNull(testApplication->m_windows.at("main")->getWindow());
+			testApplication->close();
 		}
 	};
 }

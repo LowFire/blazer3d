@@ -6,16 +6,15 @@
 #include "Application.h"
 
 int main() {
+	auto application = Application::getInstance();
 
-	Application application;
-
-	bool ok = application.init();
+	bool ok = application->init();
 	if (ok)
-		application.run();
+		application->run();
 	else {
-		application.close();
+		application->close();
 		return -1;
 	}
 
-	application.close();
+	application->close();
 }
