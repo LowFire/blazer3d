@@ -6,7 +6,7 @@ Draw::Draw() : m_origin(glm::vec3(0)), m_vert_count(3), position(glm::vec3(0)),
 	rotation(glm::vec3(0)), scale(glm::vec3(1))
 {
 	//Setup buffer first
-	m_buffer = std::make_shared<Buffer>(new Buffer);
+	m_buffer = std::make_shared<Buffer>();
 	m_buffer->initData(std::vector<Buffer::DataBlockAttribute> {
 		{ 0, sizeof(GLfloat) * 6, 0, GL_FLOAT }
 	});
@@ -20,7 +20,7 @@ Draw::Draw() : m_origin(glm::vec3(0)), m_vert_count(3), position(glm::vec3(0)),
 	m_buffer->bind();
 
 	//Setup vertex array
-	m_arrays = std::make_shared<VertexArray>(new VertexArray);
+	m_arrays = std::make_shared<VertexArray>();
 	VertexArray::VertexAttribute pos{
 	 0, 2, GL_FLOAT, GL_FALSE, 0, 0
 	};
