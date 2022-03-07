@@ -23,13 +23,13 @@ std::string Shader::f_readSource(const std::string& path)
 	buf.resize(static_cast<size_t>(len));
 	in.read(buf.data(), len);
 
-	auto success = !in.fail() ;
-	if (!success)
-	{
-		std::cout << "Error: Failed to read file: " << path << '\n';
-		char buffer[80];
-		std::cout << strerror_s(buffer, 80, NULL);
-	}
+	//auto success = !in.fail() ;
+	//if (!success)
+	//{
+	//	std::cout << "Error: Failed to read file: " << path << '\n';
+	//	char buffer[80];
+	//	std::cout << strerror_s(buffer, 80, NULL);
+	//}
 	in.close();
 	return std::string(buf.data());
 }
