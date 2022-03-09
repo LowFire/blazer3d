@@ -52,52 +52,55 @@ namespace TestOpenglWrapperAPI
 		{
 			Draw triangle;
 
-			//We want all the data to be set to draw a basic triangle (for now)
-			Assert::AreEqual(3, triangle.getVertCount());
-			Assert::AreEqual(0.0f, triangle.m_origin.x);
-			Assert::AreEqual(0.0f, triangle.m_origin.y);
-			Assert::AreEqual(0.0f, triangle.m_origin.z);
+			Assert::AreEqual(triangle.m_vert_count, 0);
 
-			Assert::AreEqual(0.0f, triangle.position.x);
-			Assert::AreEqual(0.0f, triangle.position.y);
-			Assert::AreEqual(0.0f, triangle.position.z);
 
-			Assert::AreEqual(0.0f, triangle.rotation.x);
-			Assert::AreEqual(0.0f, triangle.rotation.y);
-			Assert::AreEqual(0.0f, triangle.rotation.z);
+			////We want all the data to be set to draw a basic triangle (for now)
+			//Assert::AreEqual(3, triangle.getVertCount());
+			//Assert::AreEqual(0.0f, triangle.m_origin.x);
+			//Assert::AreEqual(0.0f, triangle.m_origin.y);
+			//Assert::AreEqual(0.0f, triangle.m_origin.z);
 
-			Assert::AreEqual(1.0f, triangle.scale.x);
-			Assert::AreEqual(1.0f, triangle.scale.y);
-			Assert::AreEqual(1.0f, triangle.scale.z);
+			//Assert::AreEqual(0.0f, triangle.position.x);
+			//Assert::AreEqual(0.0f, triangle.position.y);
+			//Assert::AreEqual(0.0f, triangle.position.z);
 
-			//Test if data has been set in the buffer object.
-			Assert::AreEqual(6, triangle.m_buffer->getDataBlockCount(0));
-			Assert::AreEqual((GLintptr)sizeof(float) * 6, triangle.m_buffer->getDataBlockSize(0));
+			//Assert::AreEqual(0.0f, triangle.rotation.x);
+			//Assert::AreEqual(0.0f, triangle.rotation.y);
+			//Assert::AreEqual(0.0f, triangle.rotation.z);
 
-			std::vector<GLfloat> expected_data{
-				0.0f, 0.5f,
-				0.5f, -0.5f,
-				-0.5f, -0.5f
-			};
+			//Assert::AreEqual(1.0f, triangle.scale.x);
+			//Assert::AreEqual(1.0f, triangle.scale.y);
+			//Assert::AreEqual(1.0f, triangle.scale.z);
 
-			std::shared_ptr<GLfloat> actual_data = triangle.m_buffer->readData<GLfloat>(0);
+			////Test if data has been set in the buffer object.
+			//Assert::AreEqual(6, triangle.m_buffer->getDataBlockCount(0));
+			//Assert::AreEqual((GLintptr)sizeof(float) * 6, triangle.m_buffer->getDataBlockSize(0));
 
-			for (int i = 0; i < expected_data.size(); i++)
-			{
-				Assert::AreEqual(expected_data.at(i), actual_data.get()[i]);
-				i++;
-			}
+			//std::vector<GLfloat> expected_data{
+			//	0.0f, 0.5f,
+			//	0.5f, -0.5f,
+			//	-0.5f, -0.5f
+			//};
 
-			//Test if vertex attributes have been set.
-			std::vector<VertexArray::VertexAttribute> attribs = triangle.m_arrays->getAllAttributes();
-			//Assert::AreEqual((size_t)1, attribs.size());
-			Assert::AreEqual((GLuint)0, attribs.at(0).index);
-			Assert::AreEqual((GLenum)GL_FLOAT, attribs.at(0).type);
-			Assert::AreEqual(2, attribs.at(0).size);
-			Assert::AreEqual((GLboolean)GL_FALSE, attribs.at(0).normalized);
-			Assert::AreEqual(0, attribs.at(0).stride);
-			Assert::AreEqual((void*)0, attribs.at(0).offset);
-			Assert::IsTrue(attribs.at(0).enabled);
+			//std::shared_ptr<GLfloat> actual_data = triangle.m_buffer->readData<GLfloat>(0);
+
+			//for (int i = 0; i < expected_data.size(); i++)
+			//{
+			//	Assert::AreEqual(expected_data.at(i), actual_data.get()[i]);
+			//	i++;
+			//}
+
+			////Test if vertex attributes have been set.
+			//std::vector<VertexArray::VertexAttribute> attribs = triangle.m_arrays->getAllAttributes();
+			////Assert::AreEqual((size_t)1, attribs.size());
+			//Assert::AreEqual((GLuint)0, attribs.at(0).index);
+			//Assert::AreEqual((GLenum)GL_FLOAT, attribs.at(0).type);
+			//Assert::AreEqual(2, attribs.at(0).size);
+			//Assert::AreEqual((GLboolean)GL_FALSE, attribs.at(0).normalized);
+			//Assert::AreEqual(0, attribs.at(0).stride);
+			//Assert::AreEqual((void*)0, attribs.at(0).offset);
+			//Assert::IsTrue(attribs.at(0).enabled);
 		}
 
 		TEST_METHOD(testDraw)

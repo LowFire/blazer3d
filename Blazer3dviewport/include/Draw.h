@@ -11,7 +11,7 @@ namespace TestOpenglWrapperAPI
 	class TestDraw;
 }
 
-class Draw
+class Draw abstract
 {
 	friend TestOpenglWrapperAPI::TestDraw;
 private:
@@ -27,16 +27,16 @@ public:
 	glm::vec3 scale;
 
 	Draw();
-	//Draw(const VertexArray& arrays, const Buffer& buffer);
 
-	void draw();
-	//void setBuffer(Buffer& buffer);
+	virtual void draw() abstract;
+
+	void setBuffer(const std::shared_ptr<Buffer> buffer);
 	std::shared_ptr<Buffer> getBuffer();
-	//void setVertexArray(const VertexArray& arrays);
+	void setVertexArray(const std::shared_ptr<VertexArray> arrays);
 	std::shared_ptr<VertexArray> getVertexArray();
 	int getVertCount();
 	void setOrigin(glm::vec3 origin);
 	glm::vec3 getOrigin();
 	void setShader(const std::shared_ptr<Shader>& shader);
-	const std::shared_ptr<Shader>& getShader();
+	std::shared_ptr<Shader> getShader();
 };
