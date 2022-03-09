@@ -4,6 +4,7 @@
 
 #include "Buffer.h"
 #include "VertexArray.h"
+#include "Shader.h"
 
 namespace TestOpenglWrapperAPI
 {
@@ -16,6 +17,7 @@ class Draw
 private:
 	std::shared_ptr<VertexArray> m_arrays;
 	std::shared_ptr<Buffer> m_buffer;
+	std::shared_ptr<Shader> m_shader;
 	GLint m_vert_count;
 	glm::vec3 m_origin;
 
@@ -35,4 +37,6 @@ public:
 	int getVertCount();
 	void setOrigin(glm::vec3 origin);
 	glm::vec3 getOrigin();
+	void setShader(const std::shared_ptr<Shader>& shader);
+	const std::shared_ptr<Shader>& getShader();
 };
