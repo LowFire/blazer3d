@@ -162,6 +162,7 @@
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Render.cpp" />
     <ClCompile Include="..\src\Shader.cpp" />
+    <ClCompile Include="..\src\Triangle.cpp" />
     <ClCompile Include="..\src\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="..\include\Draw.h" />
     <ClInclude Include="..\include\OpenglObject.h" />
     <ClInclude Include="..\include\Shader.h" />
+    <ClInclude Include="..\include\Triangle.h" />
     <ClInclude Include="..\include\Type.h" />
     <ClInclude Include="..\include\VertexArray.h" />
   </ItemGroup>

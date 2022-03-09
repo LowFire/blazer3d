@@ -25,6 +25,9 @@
     <ClCompile Include="..\src\Render.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Triangle.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Application.h">
@@ -49,6 +52,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Type.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Triangle.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
