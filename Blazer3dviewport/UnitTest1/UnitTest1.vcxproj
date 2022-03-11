@@ -173,6 +173,7 @@
     <ClCompile Include="TestRender.cpp" />
     <ClCompile Include="TestShader.cpp" />
     <ClCompile Include="TestVertexArray.cpp" />
+    <ClCompile Include="TestVertexBuffer.cpp" />
     <ClCompile Include="UnitTest1.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -39,6 +39,9 @@
     <ClCompile Include="TestRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestVertexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
