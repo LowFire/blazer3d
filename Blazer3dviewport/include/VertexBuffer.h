@@ -5,11 +5,17 @@
 #include "Buffer.h"
 #include "VertexArray.h"
 
+namespace TestOpenglWrapperAPI
+{
+	class TestVertexBuffer;
+}
+
 class VertexBuffer : public Buffer
 {
+	friend TestOpenglWrapperAPI::TestVertexBuffer;
 private:
 	std::shared_ptr<VertexArray> m_arrays;
-	static int s_currently_bound_vbo;
+	static GLuint s_currently_bound_vbo;
 
 public:
 	VertexBuffer();

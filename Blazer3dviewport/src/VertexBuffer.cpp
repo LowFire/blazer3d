@@ -1,6 +1,6 @@
 #include "VertexBuffer.h"
 
-int VertexBuffer::s_currently_bound_vbo = 0;
+GLuint VertexBuffer::s_currently_bound_vbo = 0;
 
 VertexBuffer::VertexBuffer()
 {

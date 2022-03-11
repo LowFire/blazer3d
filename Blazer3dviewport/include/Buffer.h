@@ -22,7 +22,7 @@ public:
 		GLenum type;
 	};
 
-private:
+protected:
 	GLint m_total_size;
 	GLenum m_target;
 	GLenum m_usage;
