@@ -2,8 +2,8 @@
 #include <memory>
 #include <glm\vec3.hpp>
 
-#include "Buffer.h"
-#include "VertexArray.h"
+#include "VertexBuffer.h"
+//#include "IndexBuffer.h"
 #include "Shader.h"
 
 namespace TestOpenglWrapperAPI
@@ -15,8 +15,9 @@ class Draw abstract
 {
 	friend TestOpenglWrapperAPI::TestDraw;
 private:
-	std::shared_ptr<VertexArray> m_arrays;
-	std::shared_ptr<Buffer> m_buffer;
+	//std::shared_ptr<VertexArray> m_arrays;
+	std::shared_ptr<VertexBuffer> m_vertex;
+	//std::shared_ptr<IndexBuffer> m_index;
 	std::shared_ptr<Shader> m_shader;
 	GLint m_vert_count;
 	glm::vec3 m_origin;
