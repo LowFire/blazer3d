@@ -5,14 +5,14 @@
 
 #include "OpenglObject.h"
 
-namespace TestOpenglWrapperAPI
-{
-	class TestBuffer;
-}
+//namespace TestOpenglWrapperAPI
+//{
+//	class TestBuffer;
+//}
 
-class Buffer : public OpenglObject
+class Buffer abstract : public OpenglObject
 {
-	friend TestOpenglWrapperAPI::TestBuffer;
+	//friend TestOpenglWrapperAPI::TestBuffer;
 public:
 	struct DataBlockAttribute
 	{
@@ -22,24 +22,25 @@ public:
 		GLenum type;
 	};
 
-private:
+protected:
 	GLint m_total_size;
 	GLenum m_target;
 	GLenum m_usage;
 	bool m_is_initialized = false;
 	std::unordered_map<int, DataBlockAttribute> m_data_attrib;
-	static GLuint s_currently_bound_buf;
+	/*static GLuint s_currently_bound_buf;*/
 
 public:
 	Buffer();
 	Buffer(std::initializer_list<DataBlockAttribute> l);
-	Buffer(Buffer& rhs);
+	/*Buffer(Buffer& rhs);*/
 	~Buffer();
 
-	virtual void bind() override;
-	virtual void unbind() override;
-	bool isBound();
-	static void reset();
+	virtual void bind() abstract;
+	virtual void unbind() abstract;
+	virtual bool isBound() abstract;
+	/*static void reset();*/
+
 	void initData(std::vector<DataBlockAttribute> data_blocks);
 	int getDataBlockCount(int index);
 	GLsizeiptr getDataBlockSize(int index);
@@ -87,5 +88,5 @@ public:
 		return data;
 	}
 
-	Buffer& operator = (Buffer& rhs);
+	/*Buffer& operator = (Buffer& rhs);*/
 };
