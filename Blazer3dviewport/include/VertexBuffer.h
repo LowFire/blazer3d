@@ -8,11 +8,13 @@
 namespace TestOpenglWrapperAPI
 {
 	class TestVertexBuffer;
+	class TestBuffer;
 }
 
 class VertexBuffer : public Buffer
 {
 	friend TestOpenglWrapperAPI::TestVertexBuffer;
+	friend TestOpenglWrapperAPI::TestBuffer;
 private:
 	std::shared_ptr<VertexArray> m_arrays;
 	static GLuint s_currently_bound_vbo;
