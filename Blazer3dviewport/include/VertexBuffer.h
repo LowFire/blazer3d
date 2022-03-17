@@ -19,8 +19,9 @@ private:
 
 public:
 	VertexBuffer();
+	VertexBuffer(std::initializer_list<DataBlockAttribute> l);
 	VertexBuffer(std::initializer_list<DataBlockAttribute>,
-		std::shared_ptr<VertexArray> arrays);
+		std::initializer_list<VertexArray::VertexAttribute> arrays);
 
 	static void reset();
 
@@ -30,4 +31,5 @@ public:
 
 	std::shared_ptr<VertexArray> getVertexArray();
 	void setVertexArray(std::shared_ptr<VertexArray>);
+	void makeVertexArray(std::initializer_list<VertexArray::VertexAttribute> a);
 };

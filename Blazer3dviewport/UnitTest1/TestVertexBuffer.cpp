@@ -57,32 +57,75 @@ namespace TestOpenglWrapperAPI
 
 			auto array_ptr = buf.getVertexArray();
 			Assert::IsNull(array_ptr.get());
+
+			//Target should be the array buffer.
+			Assert::AreEqual((GLenum)GL_ARRAY_BUFFER, buf.m_target);
 		}
 
 		TEST_METHOD(testDataBlockConstruction)
 		{
 			/*Buffer storage is allocated using the passed in data block attributes
-			A refernce to a VertexArray is set to describe the layout of the vertex
-			buffer data.*/
+			A VertexArray is created implicitly using the passed in VertexAttributes.
+			VertexArrays must always be created implicitly.*/
 
 			Buffer::DataBlockAttribute pos{ 0, sizeof(GLfloat) * 9, 0, GL_FLOAT };
 			Buffer::DataBlockAttribute color{ 0, sizeof(GLfloat) * 9, sizeof(GLfloat) * 9, GL_FLOAT };
 			Buffer::DataBlockAttribute uv{ 0, sizeof(GLfloat) * 6, sizeof(GLfloat) * 18, GL_FLOAT };
 
-			/*NOTE: There's a problem here. Vertex array attributes cannot be created until there is a buffer
-			with allocated storage bound to the GL_ARRAY_BUFFER target, otherwise opengl will throw an
-			error. It might make sense to have this constructor implcitly generate vertex arrays based
-			on the data block attributes passed in. This might require some refactoring of the VertexArray
-			class.*/
 			VertexArray::VertexAttribute pos_attrib { 0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 };
 			VertexArray::VertexAttribute color_attrib { 1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(GLfloat) * 9) };
 			VertexArray::VertexAttribute uv_attrib{ 2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(GLfloat) * 18) };
 
-			auto arrays = std::make_shared<VertexArray>(pos_attrib, color_attrib, uv_attrib);
+			VertexBuffer buf({ pos, color, uv }, {pos_attrib, color_attrib, uv_attrib});
 
-			VertexBuffer buf({ pos, color, uv }, arrays);
+			//Test if the vertex array was successfully created
+			auto arr = buf.getVertexArray();
 
-			Assert::AreSame(buf.getVertexArray().get(), arrays.get());
+			GLint size;
+			GLint type;
+			GLint normalized;
+			GLint stride;
+			void* offset;
+
+			arr->bind();
+			//Attribute index 0
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(0, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+
+			Assert::AreEqual(3, size);
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(0, stride);
+			Assert::AreEqual((void*)0, offset);
+
+			//Attribute index 1
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(1, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+
+			Assert::AreEqual(3, size);
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(0, stride);
+			Assert::AreEqual((void*)(sizeof(GLfloat) * 9), offset);
+
+			//Attribute index 2
+			glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(2, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+
+			Assert::AreEqual(2, size);
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(0, stride);
+			Assert::AreEqual((void*)(sizeof(GLfloat) * 18), offset);
 		}
 
 		TEST_METHOD(TestBindAndUnbind)
@@ -113,16 +156,115 @@ namespace TestOpenglWrapperAPI
 			Assert::AreEqual((GLuint)0, VertexBuffer::s_currently_bound_vbo);
 		}
 
-		TEST_METHOD(testGetAndSetVertexArray)
+		/*TEST_METHOD(testGetAndSetVertexArray)
 		{
 			VertexArray::VertexAttribute pos_attrib{ 0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 };
 			VertexArray::VertexAttribute color_attrib{ 1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(GLfloat) * 9) };
 			VertexArray::VertexAttribute uv_attrib{ 2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(GLfloat) * 18) };
 
-			auto arrays = std::make_shared<VertexArray>(pos_attrib, color_attrib, uv_attrib);
+			auto arrays = std::make_shared<VertexArray>();
+			arrays->addAttributes({ pos_attrib, color_attrib, uv_attrib });
 
 			VertexBuffer buf;
+		}*/
 
+		TEST_METHOD(testMakeVertexArray)
+		{
+			/*Creates a new vertex array and replaces the current one*/
+
+			Buffer::DataBlockAttribute pos{ 0, sizeof(GLfloat) * 9, 0, GL_FLOAT };
+			Buffer::DataBlockAttribute color{ 0, sizeof(GLfloat) * 9, sizeof(GLfloat) * 9, GL_FLOAT };
+			Buffer::DataBlockAttribute uv{ 0, sizeof(GLfloat) * 6, sizeof(GLfloat) * 18, GL_FLOAT };
+
+			VertexArray::VertexAttribute pos_attrib{ 0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 };
+			VertexArray::VertexAttribute color_attrib{ 1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(GLfloat) * 9) };
+			VertexArray::VertexAttribute uv_attrib{ 2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(GLfloat) * 18) };
+
+			VertexBuffer buf({ pos, color, uv });
+
+			buf.makeVertexArray({ pos_attrib, color_attrib, uv_attrib });
+			auto arr = buf.getVertexArray();
+
+			GLint size;
+			GLint type;
+			GLint normalized;
+			GLint stride;
+			void* offset;
+
+			arr->bind();
+			//Attribute index 0
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(0, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+
+			Assert::AreEqual(3, size);
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(0, stride);
+			Assert::AreEqual((void*)0, offset);
+
+			//Attribute index 1
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(1, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+
+			Assert::AreEqual(3, size);
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(0, stride);
+			Assert::AreEqual((void*)(sizeof(GLfloat) * 9), offset);
+
+			//Attribute index 2
+			glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(2, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+
+			Assert::AreEqual(2, size);
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(0, stride);
+			Assert::AreEqual((void*)(sizeof(GLfloat) * 18), offset);
+
+			VertexArray::VertexAttribute pos_attrib2{ 0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 };
+			VertexArray::VertexAttribute color_attrib2{ 1, 2, GL_UNSIGNED_INT, GL_TRUE, 0, (void*)(sizeof(GLfloat) * 6) };
+
+			//Should replace the current vertex array
+			buf.makeVertexArray({ pos_attrib2, color_attrib2 });
+			arr.reset();
+			arr = buf.getVertexArray();
+
+			arr->bind();
+			//Attribute index 0
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(0, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+
+			Assert::AreEqual(3, size);
+			Assert::AreEqual(GL_FLOAT, type);
+			Assert::AreEqual(GL_FALSE, normalized);
+			Assert::AreEqual(0, stride);
+			Assert::AreEqual((void*)0, offset);
+
+			//Attribute index 1
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
+			glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+			glGetVertexAttribPointerv(1, GL_VERTEX_ATTRIB_ARRAY_POINTER, &offset);
+
+			Assert::AreEqual(2, size);
+			Assert::AreEqual(GL_UNSIGNED_INT, type);
+			Assert::AreEqual(GL_TRUE, normalized);
+			Assert::AreEqual(0, stride);
+			Assert::AreEqual((void*)(sizeof(GLfloat) * 6), offset);
 		}
 	};
 }
