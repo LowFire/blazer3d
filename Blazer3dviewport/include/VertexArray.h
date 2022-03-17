@@ -1,5 +1,11 @@
 #pragma once
 
+/*NOTE: Should this class be a private class to VertexBuffer? The reason for this is
+because it doesn't make sense for this class to exist in any other context except paired
+with a vertex buffer. Also, vertex arrays cannot exist without a vertex buffer, otherwise
+opengl will throw an error. It makes sense that a vertex buffer should be the only object
+allowed to create and manage a vertex array.*/
+
 #include <unordered_map>
 #include <string>
 #include <vector>

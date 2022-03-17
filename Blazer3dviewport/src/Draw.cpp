@@ -5,27 +5,27 @@ it points to. Both references should be null on construction.*/
 Draw::Draw() : m_origin(glm::vec3(0)), m_vert_count(3), position(glm::vec3(0)), 
 	rotation(glm::vec3(0)), scale(glm::vec3(1))
 {
-	//Setup buffer first
-	m_buffer = std::make_shared<Buffer>();
-	m_buffer->initData(std::vector<Buffer::DataBlockAttribute> {
-		{ 0, sizeof(GLfloat) * 6, 0, GL_FLOAT },
-		{ 1, sizeof(GLfloat) * 9, sizeof(GLfloat) * 6, GL_FLOAT }
-	});
+	////Setup buffer first
+	//m_buffer = std::make_shared<Buffer>();
+	//m_buffer->initData(std::vector<Buffer::DataBlockAttribute> {
+	//	{ 0, sizeof(GLfloat) * 6, 0, GL_FLOAT },
+	//	{ 1, sizeof(GLfloat) * 9, sizeof(GLfloat) * 6, GL_FLOAT }
+	//});
 
-	auto pos = std::shared_ptr<GLfloat>(new GLfloat[]{
-		0.0f, 0.5f,
-		0.5f, -0.5f,
-		-0.5f, -0.5f
-		});
+	//auto pos = std::shared_ptr<GLfloat>(new GLfloat[]{
+	//	0.0f, 0.5f,
+	//	0.5f, -0.5f,
+	//	-0.5f, -0.5f
+	//	});
 
-	auto color = std::shared_ptr<GLfloat>(new GLfloat[]{
-		1.0f, 0.0, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f
-	});
-	m_buffer->writeData(0, pos);
-	m_buffer->writeData(1, color);
-	m_buffer->bind();
+	//auto color = std::shared_ptr<GLfloat>(new GLfloat[]{
+	//	1.0f, 0.0, 0.0f,
+	//	0.0f, 1.0f, 0.0f,
+	//	0.0f, 0.0f, 1.0f
+	//});
+	//m_buffer->writeData(0, pos);
+	//m_buffer->writeData(1, color);
+	//m_buffer->bind();
 
 	//Setup vertex array
 	m_arrays = std::make_shared<VertexArray>();
@@ -58,10 +58,10 @@ void Draw::draw()
 //	m_buffer = buffer;
 //}
 
-std::shared_ptr<Buffer> Draw::getBuffer()
-{
-	return m_buffer;
-}
+//std::shared_ptr<Buffer> Draw::getBuffer()
+//{
+//	return m_buffer;
+//}
 
 //void Draw::setVertexArray(const VertexArray& arrays)
 //{
