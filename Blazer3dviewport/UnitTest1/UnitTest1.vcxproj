@@ -170,6 +170,7 @@
     <ClCompile Include="testApplication.cpp" />
     <ClCompile Include="TestBuffer.cpp" />
     <ClCompile Include="TestDraw.cpp" />
+    <ClCompile Include="TestIndexBuffer.cpp" />
     <ClCompile Include="TestRender.cpp" />
     <ClCompile Include="TestShader.cpp" />
     <ClCompile Include="TestVertexArray.cpp" />
