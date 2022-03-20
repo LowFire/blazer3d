@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <vector>
 
 #include "Buffer.h"
@@ -18,14 +19,14 @@ private:
 
 public:
 	IndexBuffer();
-	IndexBuffer(std::initializer_list<GLuint> l);
+	explicit IndexBuffer(std::initializer_list<GLuint> l);
 	
 	static void reset();
 	void bind() override;
 	void unbind() override;
 	bool isBound() override;
 
-	void setIndicies(std::initializer_list<GLuint> l);
+	void setIndicies(std::vector<GLuint> indicies);
 	std::vector<GLuint> getIndicies();
-	int getIndiciesCount() { return m_indicies_count; }
+	int getCount() { return m_indicies_count; }
 };
