@@ -28,6 +28,9 @@
     <ClCompile Include="..\src\VertexBuffer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\IndexBuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Application.h">
@@ -55,6 +58,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\VertexBuffer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\IndexBuffer.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -159,6 +159,7 @@
     <ClCompile Include="..\src\Application.cpp" />
     <ClCompile Include="..\src\Buffer.cpp" />
     <ClCompile Include="..\src\Draw.cpp" />
+    <ClCompile Include="..\src\IndexBuffer.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Render.cpp" />
     <ClCompile Include="..\src\Shader.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="..\include\Buffer.h" />
     <ClInclude Include="..\include\constants.h" />
     <ClInclude Include="..\include\Draw.h" />
+    <ClInclude Include="..\include\IndexBuffer.h" />
     <ClInclude Include="..\include\OpenglObject.h" />
     <ClInclude Include="..\include\Shader.h" />
     <ClInclude Include="..\include\Type.h" />
